@@ -1,0 +1,9 @@
+﻿  main.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(13,34): error C2092: 'Target of operator new()' array element type cannot be function or abstract class type
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(13,21): error C2259: 'Brick': cannot instantiate abstract class
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\brick.h(6): message : see declaration of 'Brick'
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(13,21): message : due to following members:
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(13,21): message : 'void Entity::update(void)': is abstract
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\entity.h(9): message : see declaration of 'Entity::update'
+  player.cpp
+  Generating Code...
