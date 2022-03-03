@@ -1,12 +1,14 @@
 #pragma once
 #include "raylib.h"
-class PhysicsComponent
+#include "common.h"
+struct PhysicsComponent
 {
 	Vector2 velocity;
-public:
+	int_ptr x, y;
 	bool isActive;
 	PhysicsComponent()
 	{
+		x = y = nullptr;
 		velocity = Vector2{ 0,0 };
 		isActive = true;
 	}

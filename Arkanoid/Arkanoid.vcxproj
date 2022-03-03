@@ -145,12 +145,15 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\ball.cpp" />
     <ClCompile Include="src\brick.cpp" />
+    <ClCompile Include="src\collision.cpp" />
     <ClCompile Include="src\player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ball.h" />
     <ClInclude Include="include\brick.h" />
+    <ClInclude Include="include\collision.h" />
     <ClInclude Include="include\CollisionComponent.h" />
+    <ClInclude Include="include\common.h" />
     <ClInclude Include="include\entity.h" />
     <ClInclude Include="include\InputComponent.h" />
     <ClInclude Include="include\PhysicsComponent.h" />

@@ -5,20 +5,32 @@
 #include "InputComponent.h"
 #include "PhysicsComponent.h"
 
-class Player : public Entity
+class Player
 {
 	RenderComponent* renderer;
-	CollisionComponent* collision;
-	PhysicsComponent* physics;
-	InputComponent* input;
-public:
+	//CollisionComponent* collision;
+	//PhysicsComponent* physics;
+	//InputComponent* input;
 
+	int width = 128, height = 24;
+	Color color;
+public:
+	int x = 256, y = 456;
+	Player(RenderComponent& renderer)
+	{
+		color = MAGENTA;
+		this->renderer = &renderer;
+		renderer.isVisible = true;
+		renderer.color = &color;
+		renderer.x = &x;
+		renderer.y = &y;
+		renderer.width = width;
+		renderer.height = height;
+	}
 
 	// Inherited via Entity
-	virtual void update() override;
-
-
-	virtual void render() override;
+	void update();
+	void render();
 
 
 };

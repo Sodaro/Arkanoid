@@ -4,15 +4,40 @@
 #include "CollisionComponent.h"
 #include "PhysicsComponent.h"
 
-class Ball : public Entity
+class Ball
 {
+private:
 	RenderComponent* renderer;
-	CollisionComponent* collision;
-	PhysicsComponent* physics;
+	//CollisionComponent* collision;
+	//PhysicsComponent* physics;
+	//InputComponent* input;
+
+
 public:
-
-	// Inherited via Entity
-	virtual void update() override;
-
-	virtual void render() override;
+	int width = 16, height = 16;
+	Color color;
+	int x = 0, y = 0;
+	Ball()
+	{
+		color = WHITE;
+		renderer = nullptr;
+	};
+	Ball(RenderComponent& renderer) : renderer(&renderer)
+	{
+		color = WHITE;
+	};
+	void setActive()
+	{
+		renderer->isVisible = true;
+	}
+	void assignRenderer(RenderComponent& renderer)
+	{
+		this->renderer = &renderer;
+		renderer.isVisible = false;
+		renderer.width = width;
+		renderer.height = height;
+		renderer.color = &color;
+		renderer.x = &x;
+		renderer.y = &y;
+	}
 };

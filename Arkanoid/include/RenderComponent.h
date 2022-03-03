@@ -1,24 +1,39 @@
 #pragma once
 #include "raylib.h"
-class RenderComponent
+#include "common.h"
+struct RenderComponent
 {
 	int width, height;
-	Color color;
-public:
+	Color* color;
+	int_ptr x, y;
 	bool isVisible;
 	RenderComponent()
 	{
+		x = y = nullptr;
+		width = 0, height = 0;
+		isVisible = false;
+		color = nullptr;
+	}
+
+	RenderComponent(int_ptr x, int_ptr y, int width, int height, Color* color)
+	{
 		isVisible = true;
-		width = 60;
-		height = 40;
-		color = MAGENTA;
+		this->x = x;
+		this->y = y;
+		this->width = width;
+		this->height = height;
+		this->color = color;
 	}
-	void SetColor(Color p_color)
+	//void SetColor(Color p_color)
+	//{
+	//	color = p_color;
+	//}
+	void update()
 	{
-		color = p_color;
-	}
-	virtual void update()
-	{
-		//DrawRectangle(x, y, width, height, color);
+		if (x != nullptr && y != nullptr && color != nullptr)
+		{
+			//DrawRectangleLines()
+			DrawRectangleLines(*x, *y, width, height, *color);
+		}
 	}
 };
