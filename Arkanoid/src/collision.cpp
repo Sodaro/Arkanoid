@@ -44,7 +44,7 @@ bool circle_intersect(const Circle& a, const Circle& b)
 }
 
 
-AABB AABB::make_from_position_size(float x, float y, float w, float h)
+AABB AABB::make_from_position_size(int x, int y, int w, int h)
 {
     AABB box;
     box.x_min = x - w / 2;

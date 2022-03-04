@@ -4,6 +4,7 @@
 #include "brick.h"
 #include "ball.h"
 #include "collision.h"
+#include "input.h"
 
 constexpr int num_max_bricks = 120;
 constexpr int num_max_balls = 10;
@@ -22,10 +23,15 @@ int main()
     int bricksPerRow = 10;
     int bricksPerColumn = 5;
 
+    Input input;
     RenderComponent renderers[num_max_entities] = {};
+    CollisionComponent colliders[num_max_entities] = {};
+
+    PhysicsComponent physicsComponents[num_max_balls + 1] = {};
+
     Brick bricks[num_max_bricks];
     Ball balls[num_max_balls];
-    int rendererIndex = 0;
+    int entityIndex = 0, physicsIndex = 0; 
 
     int x;
     int y;
@@ -33,52 +39,78 @@ int main()
     {
         x = i % bricksPerRow;
         y = i / bricksPerRow;
-        rendererIndex = i;
+        entityIndex = i;
         Brick& brick = bricks[i];
-        brick.assignRenderer(renderers[rendererIndex]);
+        brick.assignRenderer(renderers[entityIndex]);
         brick.x = x * brick.width;
         brick.y = y * brick.height;
         brick.color = (x + y) % 2 == 0 ? GREEN : BLUE;
+        CollisionComponent& collider = colliders[entityIndex];
+        collider.init(&brick.x, &brick.y, &brick.width, &brick.height, colliders, num_max_entities);
     }
 
     for (int i = 0; i < num_max_balls; i++)
     {
+        physicsIndex = i;
         Ball& ball = balls[i];
-        ball.assignRenderer(renderers[++rendererIndex]);
+        PhysicsComponent& physics = physicsComponents[physicsIndex];
+        entityIndex++;
+        ball.assignRenderer(renderers[entityIndex]);
+        ball.assignPhysics(physics);
         ball.x = 200 + (i * ball.width + i * 15);
         ball.y = 300;
         ball.color = YELLOW;
+        CollisionComponent& collider = colliders[entityIndex];
+        collider.init(&ball.x, &ball.y, &ball.width, &ball.height, colliders, num_max_entities);
+        physics.collider = &collider;
+
     }
 
-
-    Player player{renderers[++rendererIndex]};
+    Player player{num_max_balls};
+    CollisionComponent& collider = colliders[num_max_entities-1];
+    PhysicsComponent& physics = physicsComponents[++physicsIndex];
+    RenderComponent& renderer = renderers[num_max_entities - 1];
+    collider.init(&player.x, &player.y, &player.width, &player.height, colliders, num_max_entities);
+    
+    physics.collider = &collider;
+    player.assignCollider(collider);
+    player.assignPhysics(physics);
+    player.assignRenderer(renderer);
 
     //AABB a = AABB::make_from_position_size(400, 200, 40, 40);
 
 
-    int ballIndex = 0;
-    uint64_t time = 0;
-    uint64_t prev_time = 0;
+    int nrOfPhysicsObjects = sizeof(physicsComponents) / sizeof(PhysicsComponent);
+    
+    double time = 0;
+    double prev_time = 0;
     float delta_time;
 
     float delay = 1;
 
+    /*
+    * balls:
+    * initial velocity based on player move direction
+    * go in one dir without velocity change
+    * on collision:
+    *   change velocity direction
+    */
+
+
+
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         time = GetTime();
-        delta_time = time - prev_time;
+        delta_time = (float)time - prev_time;
 
         delay -= delta_time;
+        //input update
+        //player update            GameObject update instead, and have player / enemies derive??
+        //ai update
+        //physics update
+        //render update
 
-        //if (IsKeyDown(KEY_SPACE) && delay <= 0)
-        //{
-        //    Ball& ball = balls[ballIndex];
-        //    ball.setActive();
-        //    ball.x = player.x;
-        //    ball.y = player.y - ball.height;
-        //    ++ballIndex %= num_max_balls;
-        //    delay = 1;
-        //}
+
         //if (IsKeyDown(KEY_RIGHT))
         //{
         //    player.x += 1;
@@ -87,6 +119,15 @@ int main()
         //{
         //    player.x -= 1;
         //}
+
+        player.update(delta_time);
+
+        for (int i = 0; i < nrOfPhysicsObjects; i++)
+        {
+            //add check for active objects
+            physicsComponents[i].update(delta_time);
+        }
+            
   
         BeginDrawing();
 

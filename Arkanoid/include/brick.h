@@ -2,11 +2,13 @@
 #include "entity.h"
 #include "RenderComponent.h"
 #include "CollisionComponent.h"
+#include "collision.h"
 
 struct Brick
 {
 private:
 	RenderComponent* renderer;
+	CollisionComponent* collider;
 
 	//CollisionComponent* collision;
 public:
@@ -16,7 +18,7 @@ public:
 	Brick()
 	{
 		color = WHITE;
-		renderer = nullptr;
+		renderer = nullptr; 
 	};
 	Brick(RenderComponent& renderer) : renderer(&renderer)
 	{
@@ -32,6 +34,11 @@ public:
 		renderer.x = &x;
 		renderer.y = &y;
 	}
+	void assignCollider(CollisionComponent& collider)
+	{
+		this->collider = &collider;
+	}
+
 	// Inherited via Entity
 	//void render() override;
 

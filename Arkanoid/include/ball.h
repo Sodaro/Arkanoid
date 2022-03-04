@@ -4,14 +4,13 @@
 #include "CollisionComponent.h"
 #include "PhysicsComponent.h"
 
+
 class Ball
 {
 private:
 	RenderComponent* renderer;
-	//CollisionComponent* collision;
-	//PhysicsComponent* physics;
-	//InputComponent* input;
-
+	PhysicsComponent* physics;
+	CollisionComponent* collider;
 
 public:
 	int width = 16, height = 16;
@@ -21,23 +20,39 @@ public:
 	{
 		color = WHITE;
 		renderer = nullptr;
+		physics = nullptr;
 	};
-	Ball(RenderComponent& renderer) : renderer(&renderer)
+	Ball(RenderComponent& renderer, PhysicsComponent &physics) : renderer(&renderer), physics(&physics)
 	{
 		color = WHITE;
 	};
 	void setActive()
 	{
 		renderer->isVisible = true;
+		Vector2 newVelocity;
+		newVelocity.x = 100;
+		newVelocity.y = -100;
+		physics->velocity = newVelocity;
 	}
 	void assignRenderer(RenderComponent& renderer)
 	{
 		this->renderer = &renderer;
-		renderer.isVisible = false;
+		renderer.isVisible = true;
 		renderer.width = width;
 		renderer.height = height;
 		renderer.color = &color;
 		renderer.x = &x;
 		renderer.y = &y;
 	}
+	void assignPhysics(PhysicsComponent& physics)
+	{
+		this->physics = &physics;
+		physics.x = &x;
+		physics.y = &y;
+	}
+	void assignCollider(CollisionComponent& collider)
+	{
+		this->collider = &collider;
+	}
+
 };

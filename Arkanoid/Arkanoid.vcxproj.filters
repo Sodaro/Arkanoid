@@ -30,6 +30,9 @@
     <ClCompile Include="src\collision.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\raylib.h">
@@ -41,7 +44,7 @@
     <ClInclude Include="include\entity.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\InputComponent.h">
+    <ClInclude Include="include\input.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\PhysicsComponent.h">
