@@ -10,7 +10,7 @@ class Player
 {
 	RenderComponent* renderer;
 	PhysicsComponent* physics;
-	CollisionComponent* collider;
+	
 	Ball* balls;
 
 	int ballIndex = 0;
@@ -18,6 +18,7 @@ class Player
 	Color color;
 	float shootDelay = 1;
 public:
+	CollisionComponent* collider;
 	Vector2 pos;
 	Vector2 size{128,24};
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)

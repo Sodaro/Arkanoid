@@ -38,20 +38,20 @@ struct PhysicsComponent
 		else
 		{
 			moveInsideScreen(velocity.x * dt, velocity.y * dt);
+			collider->update();
 		}
-
-
-	
 	
 	    //separating step into y and x separately, we're the ball can slide up and down bricks instead of stopping
 	}
-	void moveInsideScreen(float dx, float dy)
+	bool moveInsideScreen(float dx, float dy)
 	{
 		if (pos->x + dx < 0 || pos->x + dx >= 640 || pos->y + dy < 0 || pos->y + dy >= 480)
-			return;
+			return false;
 
 		pos->x += dx;
 		pos->y += dy;
+		return true;
+		
 	}
 
 	bool step(float dx, float dy)
@@ -67,7 +67,6 @@ struct PhysicsComponent
 		if (collision)
 			return false;
 
-		moveInsideScreen(dx, dy);
-		return true;
+		return moveInsideScreen(dx, dy);
 	}
 };

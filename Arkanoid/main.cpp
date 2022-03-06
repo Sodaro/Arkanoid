@@ -5,6 +5,7 @@
 #include "ball.h"
 #include "collision.h"
 #include "input.h"
+#include "raymath.h"
 
 constexpr int num_max_bricks = 120;
 constexpr int num_max_balls = 10;
@@ -14,10 +15,32 @@ constexpr int num_max_entities = num_max_bricks + num_max_balls + 1;
 constexpr int screen_width = 640;
 constexpr int screen_height = 480;
 
+
+Color lerpColor(Color c1, Color c2, float t)
+{
+    unsigned char r = c1.r + t * (c2.r - c1.r);
+    unsigned char g = c1.g + t * (c2.g - c1.g);
+    unsigned char b = c1.b + t * (c2.b - c1.b);
+
+    Color n;
+    n.r = r;
+    n.g = g;
+    n.b = b;
+
+    return n;
+}
+
 int main()
 {
     InitWindow(screen_width, screen_height, "Arkanoid - David Bang");
     SetTargetFPS(60);
+
+
+
+    /*TODO: Store index for components / register somehow
+    * use the index info to reduce health on correct brick when hit
+    */
+
 
     RenderComponent renderers[num_max_entities] = {};
     CollisionComponent colliders[num_max_entities] = {};
@@ -82,8 +105,6 @@ int main()
         collider.init(params);
     }
 
-    //AABB a = AABB::make_from_position_size(400, 200, 40, 40);
-
 
     int nrOfPhysicsObjects = sizeof(physicsComponents) / sizeof(PhysicsComponent);
     
@@ -93,15 +114,14 @@ int main()
 
     float delay = 1;
 
-    /*
-    * balls:
-    * initial velocity based on player move direction
-    * go in one dir without velocity change
-    * on collision:
-    *   change velocity direction
-    */
+    Color magenta{ 40,0,40,255 }, cyan{ 0,40,40,255 }, currentColor, targetColor, prevColor;
 
+    currentColor = prevColor = cyan;
+    targetColor = magenta;
 
+    bool forwardLerping = true;
+    float currentLerpTime = 0;
+    float lerpDuration = 5.f;
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -109,6 +129,22 @@ int main()
         delta_time = (float)(time - prev_time);
 
         delay -= delta_time;
+
+
+        
+
+        currentLerpTime += delta_time;
+        if (currentLerpTime >= lerpDuration)
+        {
+            currentLerpTime = 0;
+            forwardLerping = !forwardLerping;
+            prevColor = targetColor;
+            targetColor = forwardLerping ? magenta : cyan;
+        }
+        currentColor = lerpColor(prevColor, targetColor, currentLerpTime / lerpDuration);
+
+
+        
         //input update
         //player update            GameObject update instead, and have player / enemies derive??
         //ai update
@@ -127,7 +163,9 @@ int main()
             
   
         BeginDrawing();
+        ClearBackground(currentColor);
 
+        draw_box(player.collider->box);
         for (int i = 0; i < num_max_entities; i++)
         {
             if (renderers[i].isVisible)
@@ -138,7 +176,6 @@ int main()
 
 
         prev_time = time;
-        ClearBackground(BLACK);
 
         EndDrawing();
     }

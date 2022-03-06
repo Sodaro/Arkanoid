@@ -34,6 +34,11 @@ struct CollisionComponent
 		enabled = true;
 	}
 
+	void update()
+	{
+		box = AABB::make_from_position_size(pos, size);
+	}
+
 	bool checkCollisions(Vector2 newPos)
 	{
 		if (!enabled)

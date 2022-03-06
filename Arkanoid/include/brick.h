@@ -9,9 +9,9 @@ struct Brick
 private:
 	RenderComponent* renderer;
 	CollisionComponent* collider;
-
 	//CollisionComponent* collision;
 public:
+	int health = 1;
 	Vector2 size{64,28};
 	Vector2 pos{0,0};
 	Color color;
@@ -39,6 +39,19 @@ public:
 		this->collider = &collider;
 	}
 
+	void reduceHealth(int amount)
+	{
+		health -= amount;
+		if (health <= 0)
+		{
+			collider->enabled = false;
+			renderer->isVisible = false;
+		}
+		else
+		{
+			color = health == 1 ? GREEN : BLUE;
+		}
+	}
 	// Inherited via Entity
 	//void render() override;
 
