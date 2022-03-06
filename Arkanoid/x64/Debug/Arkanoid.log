@@ -4,14 +4,6 @@ D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderCompon
 D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\main.cpp(21,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
 D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\main.cpp(22,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
 D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\main.cpp(23,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-  ball.cpp
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  brick.cpp
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  player.cpp
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  Generating Code...
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\main.cpp(59,26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\main.cpp(60,26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
   Arkanoid.vcxproj -> D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\x64\Debug\Arkanoid.exe

@@ -7,7 +7,7 @@
 #include "input.h"
 #include "raymath.h"
 
-constexpr int num_max_bricks = 120;
+constexpr int num_max_bricks = 60;
 constexpr int num_max_balls = 10;
 constexpr int num_max_entities = num_max_bricks + num_max_balls + 1;
 
@@ -56,6 +56,9 @@ int main()
         int entityIndex = 0, physicsIndex = 0;
         CollisionComponent::ColliderParams params{ colliders, num_max_entities };
 
+        int brickOffsetX = bricks[0].size.x / 2;
+        int brickOffsetY = bricks[0].size.y / 2;
+
         for (int i = 0; i < num_max_bricks; i++)
         {
             int x = i % bricksPerRow;
@@ -63,8 +66,17 @@ int main()
             entityIndex = i;
             Brick& brick = bricks[i];
             brick.assignRenderer(renderers[entityIndex]);
-            brick.pos = Vector2{ x * brick.size.x, y * brick.size.y };
-            brick.color = (x + y) % 2 == 0 ? GREEN : BLUE;
+            brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
+            switch (y)
+            {
+                case 0: {brick.color = GRAY;
+                            brick.health = 2;} break;
+                case 1: brick.color = RED;     break;
+                case 2: brick.color = YELLOW;  break;
+                case 3: brick.color = BLUE;    break;
+                case 4: brick.color = MAGENTA; break;
+                case 5: brick.color = GREEN;   break; 
+            }
             CollisionComponent& collider = colliders[entityIndex];
             params.pos = &brick.pos;
             params.size = &brick.size;
