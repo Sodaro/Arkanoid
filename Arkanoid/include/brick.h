@@ -12,27 +12,27 @@ private:
 
 	//CollisionComponent* collision;
 public:
-	int width = 64, height = 24;
-	int x = 0, y = 0;
+	Vector2 size{64,28};
+	Vector2 pos{0,0};
 	Color color;
 	Brick()
 	{
+		collider = nullptr;
 		color = WHITE;
 		renderer = nullptr; 
 	};
 	Brick(RenderComponent& renderer) : renderer(&renderer)
 	{
+		collider = nullptr;
 		color = WHITE;
 	};
 	void assignRenderer(RenderComponent& renderer)
 	{
 		this->renderer = &renderer;
 		renderer.isVisible = true;
-		renderer.width = width;
-		renderer.height = height;
+		renderer.size = size;
 		renderer.color = &color;
-		renderer.x = &x;
-		renderer.y = &y;
+		renderer.pos = &pos;
 	}
 	void assignCollider(CollisionComponent& collider)
 	{

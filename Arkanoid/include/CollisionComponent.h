@@ -4,32 +4,42 @@
 
 struct CollisionComponent
 {
-	CollisionComponent* colliders;
-	int numColliders;
+
+	struct ColliderParams
+	{
+		vec2_ptr pos, size;
+		CollisionComponent* colliders;
+		int numColliders;
+		ColliderParams(CollisionComponent* p_colliders, const int p_numColliders) : colliders(p_colliders), numColliders(p_numColliders)
+		{
+			pos = size = nullptr;
+		}
+	};
+
+	CollisionComponent* colliders = nullptr;
+	int numColliders = 0;
 
 	bool enabled = false;
 
-	int_ptr x, y, w, h;
+	vec2_ptr pos = nullptr, size = nullptr;
 
 	AABB box{0,0,0,0};
-	void init(int_ptr x, int_ptr y, int_ptr w, int_ptr h, CollisionComponent* colliders, const int numColliders)
+	void init(ColliderParams params)
 	{
-		this->colliders = colliders;
-		box = AABB::make_from_position_size(*x, *y, *w, *h);
-		this->x = x;
-		this->y = y;
-		this->w = w;
-		this->h = h;
-		this->numColliders = numColliders;
+		this->colliders = params.colliders;
+		box = AABB::make_from_position_size(params.pos, params.size);
+		this->pos = params.pos;
+		this->size = params.size;
+		this->numColliders = params.numColliders;
 		enabled = true;
 	}
 
-	bool checkCollisions()
+	bool checkCollisions(Vector2 newPos)
 	{
 		if (!enabled)
 			return false;
 
-		box = AABB::make_from_position_size(*x, *y, *w, *h);
+		box = AABB::make_from_position_size(&newPos, size);
 		for (int i = 0; i < numColliders; ++i)
 		{
 			if (this == &colliders[i])
@@ -43,7 +53,8 @@ struct CollisionComponent
 
 			AABB box2 = collider2.box;
 			if (aabb_intersect(box, box2))
-				return false;
+				return true;
 		}
+		return false;
 	}
 };

@@ -19,63 +19,68 @@ int main()
     InitWindow(screen_width, screen_height, "Arkanoid - David Bang");
     SetTargetFPS(60);
 
-
-    int bricksPerRow = 10;
-    int bricksPerColumn = 5;
-
-    Input input;
     RenderComponent renderers[num_max_entities] = {};
     CollisionComponent colliders[num_max_entities] = {};
-
     PhysicsComponent physicsComponents[num_max_balls + 1] = {};
-
+    
     Brick bricks[num_max_bricks];
     Ball balls[num_max_balls];
-    int entityIndex = 0, physicsIndex = 0; 
+    Player player{ num_max_balls };
 
-    int x;
-    int y;
-    for (int i = 0; i < num_max_bricks; i++)
     {
-        x = i % bricksPerRow;
-        y = i / bricksPerRow;
-        entityIndex = i;
-        Brick& brick = bricks[i];
-        brick.assignRenderer(renderers[entityIndex]);
-        brick.x = x * brick.width;
-        brick.y = y * brick.height;
-        brick.color = (x + y) % 2 == 0 ? GREEN : BLUE;
-        CollisionComponent& collider = colliders[entityIndex];
-        collider.init(&brick.x, &brick.y, &brick.width, &brick.height, colliders, num_max_entities);
+        int bricksPerRow = 10;
+        int bricksPerColumn = 5;
+        int entityIndex = 0, physicsIndex = 0;
+        CollisionComponent::ColliderParams params{ colliders, num_max_entities };
+
+        for (int i = 0; i < num_max_bricks; i++)
+        {
+            int x = i % bricksPerRow;
+            int y = i / bricksPerRow;
+            entityIndex = i;
+            Brick& brick = bricks[i];
+            brick.assignRenderer(renderers[entityIndex]);
+            brick.pos = Vector2{ x * brick.size.x, y * brick.size.y };
+            brick.color = (x + y) % 2 == 0 ? GREEN : BLUE;
+            CollisionComponent& collider = colliders[entityIndex];
+            params.pos = &brick.pos;
+            params.size = &brick.size;
+            collider.init(params);
+        }
+
+        for (int i = 0; i < num_max_balls; i++)
+        {
+            physicsIndex = i;
+            entityIndex++;
+            CollisionComponent& collider = colliders[entityIndex];
+            PhysicsComponent& physics = physicsComponents[physicsIndex];
+            RenderComponent& renderer = renderers[entityIndex];
+            Ball& ball = balls[i];
+
+            //ball = Ball{renderer, physics, collider };
+            ball.pos = Vector2{ 200 + (i * ball.size.x + i * 15), 340 };
+
+            params.pos = &ball.pos;
+            params.size = &ball.size;
+            collider.init(params);
+
+
+            ball.color = YELLOW;
+
+            ball.assignRenderer(renderer);
+            ball.assignPhysics(physics);
+            ball.assignCollider(collider);
+        }
+
+
+        CollisionComponent& collider = colliders[num_max_entities - 1];
+        PhysicsComponent& physics = physicsComponents[++physicsIndex];
+        RenderComponent& renderer = renderers[num_max_entities - 1];
+        player = Player{ renderer, physics, collider, balls, num_max_balls };
+        params.pos = &player.pos;
+        params.size = &player.size;
+        collider.init(params);
     }
-
-    for (int i = 0; i < num_max_balls; i++)
-    {
-        physicsIndex = i;
-        Ball& ball = balls[i];
-        PhysicsComponent& physics = physicsComponents[physicsIndex];
-        entityIndex++;
-        ball.assignRenderer(renderers[entityIndex]);
-        ball.assignPhysics(physics);
-        ball.x = 200 + (i * ball.width + i * 15);
-        ball.y = 300;
-        ball.color = YELLOW;
-        CollisionComponent& collider = colliders[entityIndex];
-        collider.init(&ball.x, &ball.y, &ball.width, &ball.height, colliders, num_max_entities);
-        physics.collider = &collider;
-
-    }
-
-    Player player{num_max_balls};
-    CollisionComponent& collider = colliders[num_max_entities-1];
-    PhysicsComponent& physics = physicsComponents[++physicsIndex];
-    RenderComponent& renderer = renderers[num_max_entities - 1];
-    collider.init(&player.x, &player.y, &player.width, &player.height, colliders, num_max_entities);
-    
-    physics.collider = &collider;
-    player.assignCollider(collider);
-    player.assignPhysics(physics);
-    player.assignRenderer(renderer);
 
     //AABB a = AABB::make_from_position_size(400, 200, 40, 40);
 
@@ -101,7 +106,7 @@ int main()
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         time = GetTime();
-        delta_time = (float)time - prev_time;
+        delta_time = (float)(time - prev_time);
 
         delay -= delta_time;
         //input update
@@ -109,23 +114,15 @@ int main()
         //ai update
         //physics update
         //render update
-
-
-        //if (IsKeyDown(KEY_RIGHT))
-        //{
-        //    player.x += 1;
-        //}
-        //if (IsKeyDown(KEY_LEFT))
-        //{
-        //    player.x -= 1;
-        //}
-
         player.update(delta_time);
 
         for (int i = 0; i < nrOfPhysicsObjects; i++)
         {
             //add check for active objects
-            physicsComponents[i].update(delta_time);
+            if (physicsComponents[i].isActive)
+            {
+                physicsComponents[i].update(delta_time);
+            }
         }
             
   

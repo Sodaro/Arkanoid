@@ -18,9 +18,11 @@ class Player
 	Color color;
 	float shootDelay = 1;
 public:
-	int x = 256, y = 456, width = 128, height = 24;
+	Vector2 pos;
+	Vector2 size{128,24};
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)
 	{
+		pos = Vector2{ 256,456 };
 		color = MAGENTA;
 		renderer = nullptr;
 		collider = nullptr;
@@ -31,38 +33,60 @@ public:
 	Player(RenderComponent& renderer, PhysicsComponent& physics, CollisionComponent& collider, Ball* ballsArr, const int nrOfBalls) : renderer(&renderer), physics(&physics),
 		collider(&collider), nrOfBalls(nrOfBalls)
 	{
+		pos = Vector2{ 256,456 };
 		color = MAGENTA;
 		renderer.isVisible = true;
 		renderer.color = &color;
-		renderer.x = &x;
-		renderer.y = &y;
-		renderer.width = width;
-		renderer.height = height;
+		renderer.pos = &pos;
+		renderer.size = size;
 		balls = ballsArr;
 
-		physics.x = &x;
-		physics.y = &y;
+		physics.pos = &pos;
+		physics.collider = &collider;
+		physics.isActive = true;
+		physics.reflectOnCollision = false;
 	}
 	void assignRenderer(RenderComponent& renderer)
 	{
 		color = MAGENTA;
 		this->renderer = &renderer;
 		renderer.isVisible = true;
-		renderer.width = width;
-		renderer.height = height;
+		renderer.size = size;
 		renderer.color = &color;
-		renderer.x = &x;
-		renderer.y = &y;
+		renderer.pos = &pos;
 	}
 	void assignPhysics(PhysicsComponent& physics)
 	{
 		this->physics = &physics;
-		physics.x = &x;
-		physics.y = &y;
+		physics.pos = &pos;
+		physics.isActive = true;
+		physics.reflectOnCollision = false;
 	}
 	void assignCollider(CollisionComponent& collider)
 	{
 		this->collider = &collider;
+	}
+
+	Player& operator= (Player&& p) noexcept
+	{
+		this->renderer = p.renderer;
+		this->physics = p.physics;
+		this->collider = p.collider;
+		this->pos = p.pos;
+
+		renderer->pos = &pos;
+		physics->pos = &pos;
+		collider->pos = &pos;
+		
+		this->size = p.size;
+		this->balls = p.balls;
+
+		p.renderer = nullptr;
+		p.collider = nullptr;
+		p.physics = nullptr;
+		p.balls = nullptr;
+
+		return *this;
 	}
 
 	void update(float dt);

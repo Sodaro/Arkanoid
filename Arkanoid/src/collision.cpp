@@ -1,6 +1,7 @@
 #include "collision.h"
 #include "raylib.h"
 #include "raymath.h"
+#include "common.h"
 
 
 
@@ -12,18 +13,18 @@ void draw_circle(const Circle& c)
 	for (int i = 0; i < resolution; ++i)
 	{
 		float angle = step * i;
-		float x1 = cos(angle);
-		float y1 = sin(angle);
+		double x1 = cos(angle);
+		double y1 = sin(angle);
 
 		float next_angle = step * (i + 1);
-		float x2 = cos(next_angle);
-		float y2 = sin(next_angle);
+		double x2 = cos(next_angle);
+		double y2 = sin(next_angle);
 
 		DrawLine(
-			x1 * c.radius + c.x,
-			y1 * c.radius + c.y,
-			x2 * c.radius + c.x,
-			y2 * c.radius + c.y,
+			(int)(x1 * c.radius + c.x),
+			(int)(y1 * c.radius + c.y),
+			(int)(x2 * c.radius + c.x),
+			(int)(y2 * c.radius + c.y),
 			WHITE
 		);
 	}
@@ -37,21 +38,31 @@ bool circle_intersect(const Circle& a, const Circle& b)
 	// Pythagoras!!!!
 	// dist^2 = x^2 + y^2
 	float dist_sqrd = dx * dx + dy * dy;
-	float dist = sqrt(dist_sqrd);
+	double dist = sqrt(dist_sqrd);
 
 	float radius_sum = a.radius + b.radius;
 	return dist < radius_sum;
 }
 
 
-AABB AABB::make_from_position_size(int x, int y, int w, int h)
+//AABB AABB::make_from_position_size(int x, int y, int w, int h)
+//{
+//    AABB box;
+//    box.x_min = x - w / 2;
+//    box.y_min = y - h / 2;
+//    box.x_max = x + w / 2;
+//    box.y_max = x + w / 2;
+//    return box;
+//}
+
+AABB AABB::make_from_position_size(vec2_ptr pos, vec2_ptr size)
 {
-    AABB box;
-    box.x_min = x - w / 2;
-    box.y_min = y - h / 2;
-    box.x_max = x + w / 2;
-    box.y_max = x + w / 2;
-    return box;
+	AABB box;
+	box.x_min = pos->x - size->x / 2;
+	box.y_min = pos->y - size->y / 2;
+	box.x_max = pos->x + size->x / 2;
+	box.y_max = pos->y + size->y / 2;
+	return box;
 }
 
 void draw_box(const AABB& box)
@@ -87,7 +98,7 @@ bool aabb_circle_intersect(const AABB& a, const Circle& b)
 	float dy = b.y - clamped_y;
 
 	float dist_squared = dx * dx + dy * dy;
-	float dist = sqrt(dist_squared);
+	double dist = sqrt(dist_squared);
 
 	return dist < b.radius;
 }

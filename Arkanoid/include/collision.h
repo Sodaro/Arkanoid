@@ -1,4 +1,6 @@
 #pragma once
+#include "raylib.h"
+#include "common.h"
 struct Circle
 {
     float x;
@@ -10,8 +12,9 @@ void draw_circle(const Circle& circle);
 
 struct AABB
 {
-    int x_min, y_min, x_max, y_max;
-    static AABB make_from_position_size(int x, int y, int w, int h);
+    float x_min, y_min, x_max, y_max;
+    //static AABB make_from_position_size(int x, int y, int w, int h);
+    static AABB make_from_position_size(vec2_ptr pos, vec2_ptr size);
 };
 void draw_box(const AABB& box);
 bool aabb_intersect(const AABB& a, const AABB& b);

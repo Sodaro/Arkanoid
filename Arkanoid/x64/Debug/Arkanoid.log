@@ -1,7 +1,11 @@
 ﻿  main.cpp
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\PhysicsComponent.h(50,1): warning C4311: 'type cast': pointer truncation from 'int_ptr' to 'int'
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\PhysicsComponent.h(50,1): warning C4302: 'type cast': truncation from 'int_ptr' to 'int'
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(104,34): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(26,11): warning C4101: 'input': unreferenced local variable
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\CollisionComponent.h(48): warning C4715: 'CollisionComponent::checkCollisions': not all control paths return a value
-  Arkanoid.vcxproj -> C:\Users\david.bang\Documents\CPP\Arkanoid\x64\Debug\Arkanoid.exe
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  ball.cpp
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  player.cpp
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(34,35): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Generating Code...
+  Arkanoid.vcxproj -> D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\x64\Debug\Arkanoid.exe

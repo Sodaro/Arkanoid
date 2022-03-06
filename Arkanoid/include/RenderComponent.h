@@ -3,25 +3,23 @@
 #include "common.h"
 struct RenderComponent
 {
-	int width, height;
 	Color* color;
-	int_ptr x, y;
+	vec2_ptr pos;
+	Vector2 size;
 	bool isVisible;
 	RenderComponent()
 	{
-		x = y = nullptr;
-		width = 0, height = 0;
+		pos = nullptr;
+		size = Vector2{ 0,0 };
 		isVisible = false;
 		color = nullptr;
 	}
 
-	RenderComponent(int_ptr x, int_ptr y, int width, int height, Color* color)
+	RenderComponent(vec2_ptr pos, Vector2 size, Color* color)
 	{
 		isVisible = true;
-		this->x = x;
-		this->y = y;
-		this->width = width;
-		this->height = height;
+		this->pos = pos;
+		this->size = size;
 		this->color = color;
 	}
 	//void SetColor(Color p_color)
@@ -30,10 +28,10 @@ struct RenderComponent
 	//}
 	void update()
 	{
-		if (x != nullptr && y != nullptr && color != nullptr)
+		if (pos != nullptr && color != nullptr)
 		{
 			//DrawRectangleLines()
-			DrawRectangleLines(*x, *y, width, height, *color);
+			DrawRectangleLines((int)pos->x - size.x/2, (int)pos->y - size.y/2, (int)size.x, (int)size.y, *color);
 		}
 	}
 };
