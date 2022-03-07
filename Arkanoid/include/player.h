@@ -6,24 +6,19 @@
 #include "PhysicsComponent.h"
 #include "ball.h"
 
-class Player
+class Player : public Entity
 {
-	RenderComponent* renderer;
-	PhysicsComponent* physics;
-	
 	Ball* balls;
 
 	int ballIndex = 0;
 	const int nrOfBalls;
-	Color color;
 	float shootDelay = 1;
 public:
 	CollisionComponent* collider;
-	Vector2 pos;
-	Vector2 size{128,24};
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)
 	{
-		pos = Vector2{ 256,456 };
+		pos = { 256,456 };
+		size = { 128,24 };
 		color = MAGENTA;
 		renderer = nullptr;
 		collider = nullptr;
@@ -31,41 +26,22 @@ public:
 		balls = nullptr;
 	}
 
-	Player(RenderComponent& renderer, PhysicsComponent& physics, CollisionComponent& collider, Ball* ballsArr, const int nrOfBalls) : renderer(&renderer), physics(&physics),
-		collider(&collider), nrOfBalls(nrOfBalls)
+	Player(RenderComponent* renderer, PhysicsComponent* physics, CollisionComponent* collider, Ball* ballsArr, const int nrOfBalls) : nrOfBalls(nrOfBalls)
 	{
-		pos = Vector2{ 256,456 };
-		color = MAGENTA;
-		renderer.isVisible = true;
-		renderer.color = &color;
-		renderer.pos = &pos;
-		renderer.size = size;
-		balls = ballsArr;
+		this->renderer = renderer;
+		this->collider = collider;
+		this->physics = physics;
 
-		physics.pos = &pos;
-		physics.collider = &collider;
-		physics.isActive = true;
-		physics.reflectOnCollision = false;
-	}
-	void assignRenderer(RenderComponent& renderer)
-	{
+		pos = { 256,456 };
+		size = { 128,24 };
 		color = MAGENTA;
-		this->renderer = &renderer;
-		renderer.isVisible = true;
-		renderer.size = size;
-		renderer.color = &color;
-		renderer.pos = &pos;
-	}
-	void assignPhysics(PhysicsComponent& physics)
-	{
-		this->physics = &physics;
-		physics.pos = &pos;
-		physics.isActive = true;
-		physics.reflectOnCollision = false;
-	}
-	void assignCollider(CollisionComponent& collider)
-	{
-		this->collider = &collider;
+		this->renderer->isVisible = true;
+		setupRenderer();
+		balls = ballsArr;
+		physics->pos = &pos;
+		physics->collider = collider;
+		physics->isActive = true;
+		physics->reflectOnCollision = false;
 	}
 
 	Player& operator= (Player&& p) noexcept

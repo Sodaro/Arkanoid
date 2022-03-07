@@ -13,8 +13,6 @@ void Player::update(float dt)
         ++ballIndex %= nrOfBalls;
         shootDelay = 1;
 	}
-
-    //std::cout << pos.x << std::endl;
     int horizontal = Input::getHorizontalInput();
     Vector2 newVelocity;
     newVelocity.x = 200.f * horizontal;

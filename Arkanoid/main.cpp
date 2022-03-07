@@ -6,15 +6,7 @@
 #include "collision.h"
 #include "input.h"
 #include "raymath.h"
-
-constexpr int num_max_bricks = 60;
-constexpr int num_max_balls = 10;
-constexpr int num_max_entities = num_max_bricks + num_max_balls + 1;
-
-
-constexpr int screen_width = 640;
-constexpr int screen_height = 480;
-
+#include "config.h"
 
 Color lerpColor(Color c1, Color c2, float t)
 {
@@ -33,14 +25,6 @@ Color lerpColor(Color c1, Color c2, float t)
 int main()
 {
     InitWindow(screen_width, screen_height, "Arkanoid - David Bang");
-    SetTargetFPS(60);
-
-
-
-    /*TODO: Store index for components / register somehow
-    * use the index info to reduce health on correct brick when hit
-    */
-
 
     RenderComponent renderers[num_max_entities] = {};
     CollisionComponent colliders[num_max_entities] = {};
@@ -51,8 +35,7 @@ int main()
     Player player{ num_max_balls };
 
     {
-        int bricksPerRow = 10;
-        int bricksPerColumn = 5;
+
         int entityIndex = 0, physicsIndex = 0;
         CollisionComponent::ColliderParams params{ colliders, num_max_entities };
 
@@ -65,7 +48,8 @@ int main()
             int y = i / bricksPerRow;
             entityIndex = i;
             Brick& brick = bricks[i];
-            brick.assignRenderer(renderers[entityIndex]);
+            RenderComponent* renderer = &renderers[entityIndex];
+            brick.assignRenderer(renderer);
             brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
             switch (y)
             {
@@ -77,19 +61,32 @@ int main()
                 case 4: brick.color = MAGENTA; break;
                 case 5: brick.color = GREEN;   break; 
             }
-            CollisionComponent& collider = colliders[entityIndex];
+
+            CollisionComponent* collider = &colliders[entityIndex];
             params.pos = &brick.pos;
             params.size = &brick.size;
-            collider.init(params);
+            params.owner = &brick;
+            collider->init(params);
+            brick.assignCollider(collider);
+            renderer->isVisible = true;
+
+
+            //TODO: DO NOT SEND PTR TO ALL BRICKS
+            brick.brickIndex = entityIndex;
+            brick.bricks = bricks;
+            if (i >= 50)
+            {
+                collider->enabled = true;
+            }
         }
 
         for (int i = 0; i < num_max_balls; i++)
         {
             physicsIndex = i;
             entityIndex++;
-            CollisionComponent& collider = colliders[entityIndex];
-            PhysicsComponent& physics = physicsComponents[physicsIndex];
-            RenderComponent& renderer = renderers[entityIndex];
+            CollisionComponent* collider = &colliders[entityIndex];
+            PhysicsComponent* physics = &physicsComponents[physicsIndex];
+            RenderComponent* renderer = &renderers[entityIndex];
             Ball& ball = balls[i];
 
             //ball = Ball{renderer, physics, collider };
@@ -97,24 +94,29 @@ int main()
 
             params.pos = &ball.pos;
             params.size = &ball.size;
-            collider.init(params);
+            params.owner = &ball;
+            collider->init(params);
 
 
             ball.color = YELLOW;
 
             ball.assignRenderer(renderer);
+            
             ball.assignPhysics(physics);
             ball.assignCollider(collider);
         }
 
 
-        CollisionComponent& collider = colliders[num_max_entities - 1];
-        PhysicsComponent& physics = physicsComponents[++physicsIndex];
-        RenderComponent& renderer = renderers[num_max_entities - 1];
+        CollisionComponent* collider = &colliders[num_max_entities - 1];
+        PhysicsComponent* physics = &physicsComponents[++physicsIndex];
+        RenderComponent* renderer = &renderers[num_max_entities - 1];
         player = Player{ renderer, physics, collider, balls, num_max_balls };
+        player.color = MAGENTA;
         params.pos = &player.pos;
         params.size = &player.size;
-        collider.init(params);
+        params.owner = &player;
+        collider->init(params);
+        collider->enabled = true;
     }
 
 
@@ -122,28 +124,22 @@ int main()
     
     double time = 0;
     double prev_time = 0;
-    float delta_time;
+    double delta_time;
 
-    float delay = 1;
-
-    Color magenta{ 40,0,40,255 }, cyan{ 0,40,40,255 }, currentColor, targetColor, prevColor;
-
+    Color magenta{ 255,0,255,255 }, cyan{ 0,255,255,255 }, currentColor, targetColor, prevColor;
+    Color colors[7] = { RED, ORANGE, YELLOW, GREEN, cyan, BLUE, PURPLE};
     currentColor = prevColor = cyan;
-    targetColor = magenta;
+    targetColor = colors[0];
 
     bool forwardLerping = true;
     float currentLerpTime = 0;
-    float lerpDuration = 5.f;
+    float lerpDuration = 2.f;
+    int colorIndex = 0;
 
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         time = GetTime();
-        delta_time = (float)(time - prev_time);
-
-        delay -= delta_time;
-
-
-        
+        delta_time = (time - prev_time);
 
         currentLerpTime += delta_time;
         if (currentLerpTime >= lerpDuration)
@@ -151,41 +147,41 @@ int main()
             currentLerpTime = 0;
             forwardLerping = !forwardLerping;
             prevColor = targetColor;
-            targetColor = forwardLerping ? magenta : cyan;
+            
+            colorIndex++;
+            colorIndex %= 7;
+            targetColor = colors[colorIndex];
         }
         currentColor = lerpColor(prevColor, targetColor, currentLerpTime / lerpDuration);
 
 
-        
-        //input update
-        //player update            GameObject update instead, and have player / enemies derive??
-        //ai update
-        //physics update
-        //render update
+        //player logic update
         player.update(delta_time);
 
         for (int i = 0; i < nrOfPhysicsObjects; i++)
         {
-            //add check for active objects
             if (physicsComponents[i].isActive)
             {
                 physicsComponents[i].update(delta_time);
             }
         }
+
             
   
         BeginDrawing();
-        ClearBackground(currentColor);
 
-        draw_box(player.collider->box);
+        ClearBackground(Color{0,0,40,255});
         for (int i = 0; i < num_max_entities; i++)
         {
             if (renderers[i].isVisible)
             {
+
                 renderers[i].update();
             }
         }
-
+        BeginBlendMode(BLEND_MULTIPLIED);
+        DrawRectangle(0, 0, 640, 480, currentColor);
+        EndBlendMode();
 
         prev_time = time;
 

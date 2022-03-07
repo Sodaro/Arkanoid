@@ -1,6 +1,7 @@
 #pragma once
 #include "raylib.h"
 #include "common.h"
+#include "raymath.h"
 struct RenderComponent
 {
 	Color* color;
@@ -31,7 +32,8 @@ struct RenderComponent
 		if (pos != nullptr && color != nullptr)
 		{
 			//DrawRectangleLines()
-			DrawRectangleLines((int)pos->x - size.x/2, (int)pos->y - size.y/2, (int)size.x, (int)size.y, *color);
+
+			DrawRectangleLines(round(pos->x - size.x/2), round(pos->y - size.y/2), (int)size.x, (int)size.y, *color);
 		}
 	}
 };
