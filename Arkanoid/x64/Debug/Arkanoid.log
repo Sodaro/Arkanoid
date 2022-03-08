@@ -6,6 +6,26 @@ C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(14,21): warning C42
 C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(15,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
 C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(42,26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
 C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(43,26): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(144,28): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(159,23): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(149,28): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(164,23): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  CollisionComponent.cpp
+  PhysicsComponent.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\PhysicsComponent.cpp(27,19): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\PhysicsComponent.cpp(28,24): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\PhysicsComponent.cpp(34,48): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\PhysicsComponent.cpp(34,31): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  ball.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,54): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,28): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  brick.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,54): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,28): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  collision.cpp
+  entity.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,54): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,28): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  player.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,54): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\include\RenderComponent.h(36,28): warning C4244: 'argument': conversion from 'double' to 'int', possible loss of data
+  Generating Code...
   Arkanoid.vcxproj -> C:\Users\david.bang\Documents\CPP\Arkanoid\x64\Debug\Arkanoid.exe

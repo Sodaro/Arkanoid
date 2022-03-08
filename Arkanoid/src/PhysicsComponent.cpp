@@ -1,4 +1,6 @@
 #include "PhysicsComponent.h"
+#include "config.h"
+#include "entity.h"
 
 PhysicsComponent::PhysicsComponent()
 {
@@ -19,11 +21,13 @@ void PhysicsComponent::update(double dt)
 {
 	if (reflectOnCollision)
 	{
-		if (!step(velocity.x * dt, 0.f))
-			velocity.x = -velocity.x * 1.0f;
+		//if (!step(velocity.x * dt, 0.f))
+			//velocity.x = -velocity.x * 1.0f;
 
-		if (!step(0.f, velocity.y * dt))
-			velocity.y = -velocity.y * 1.0f;
+		step(velocity.x * dt, 0.f);
+		step(0.f, velocity.y * dt);
+		//if (!step(0.f, velocity.y * dt))
+			//velocity.y = -velocity.y * 1.0f;
 	}
 	else
 	{
@@ -36,8 +40,24 @@ void PhysicsComponent::update(double dt)
 
 bool PhysicsComponent::moveInsideScreen(float dx, float dy)
 {
-	if (pos->x + dx < 0 || pos->x + dx >= 640 || pos->y + dy < 0 || pos->y + dy >= 480)
+	bool left = pos->x + dx < 0;
+	bool right = pos->x + dx >= game_width;
+	bool up = pos->y + dy < 0;
+	bool down = pos->y + dy >= game_height;
+	if (left || right || up || down)
+	{
+		Vector2 side{ 0,0 };
+		if (left)
+			side.x = -1;
+		else if (right)
+			side.x = 1;
+		else if (up)
+			side.y = -1;
+		else
+			side.y = 1;
+		collider->owner->onCollision(side);
 		return false;
+	}
 
 	pos->x += dx;
 	pos->y += dy;

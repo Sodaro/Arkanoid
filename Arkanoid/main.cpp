@@ -136,6 +136,11 @@ int main()
     float lerpDuration = 2.f;
     int colorIndex = 0;
 
+    RenderTexture2D target = LoadRenderTexture(game_width, game_height);
+    BeginTextureMode(target);
+    ClearBackground(BLACK);
+    EndTextureMode();
+
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         time = GetTime();
@@ -166,22 +171,28 @@ int main()
             }
         }
 
-            
-  
-        BeginDrawing();
-
-        ClearBackground(Color{0,0,40,255});
+        
+        BeginTextureMode(target);
+        ClearBackground(Color{20,20,20,255});
+        //ClearBackground(colors[0]);
         for (int i = 0; i < num_max_entities; i++)
         {
             if (renderers[i].isVisible)
             {
-
                 renderers[i].update();
             }
         }
         BeginBlendMode(BLEND_MULTIPLIED);
-        DrawRectangle(0, 0, 640, 480, currentColor);
+        DrawRectangle(0, 0, game_width, game_height, currentColor);
         EndBlendMode();
+
+
+        EndTextureMode();
+  
+        BeginDrawing();
+
+        DrawTexturePro(target.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
+
 
         prev_time = time;
 
@@ -189,7 +200,7 @@ int main()
     }
 
 
-
+    UnloadRenderTexture(target);
     CloseWindow();
 
 

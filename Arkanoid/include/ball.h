@@ -18,6 +18,8 @@ public:
 	//	renderer->pos = &pos;
 	//}
 
+	void onCollision(Vector2 normal) override;
+
 	void setActive()
 	{
 		renderer->isVisible = true;

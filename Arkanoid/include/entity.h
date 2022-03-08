@@ -22,7 +22,8 @@ public:
 
 	//virtual void onCollision(Entity* owner) = 0;
 	//void assignCollisionCallback();
-	virtual void onCollision() {};
+	virtual void onCollision(Vector2 normal) {};
+	virtual void onLeaveScreen(Vector2 border) {};
 	void assignRenderer(RenderComponent* renderer);
 	void assignPhysics(PhysicsComponent* physics);
 	void assignCollider(CollisionComponent* collider);

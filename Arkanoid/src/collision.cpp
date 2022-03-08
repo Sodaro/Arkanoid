@@ -62,6 +62,8 @@ AABB AABB::make_from_position_size(vec2_ptr pos, vec2_ptr size)
 	box.y_min = pos->y - size->y / 2;
 	box.x_max = pos->x + size->x / 2;
 	box.y_max = pos->y + size->y / 2;
+	box.centerX = pos->x;
+	box.centerY = pos->y;
 	return box;
 }
 
@@ -77,6 +79,10 @@ void draw_box(const AABB& box)
 
     DrawRectangleLinesEx(rect, 1, WHITE);
 }
+void draw_rect(const Rectangle rect)
+{
+	DrawRectangleLinesEx(rect, 1, WHITE);
+}
 
 bool aabb_intersect(const AABB& a, const AABB& b)
 {
@@ -87,6 +93,21 @@ bool aabb_intersect(const AABB& a, const AABB& b)
 			a.y_max > b.y_min &&
 			b.y_max > a.y_min
 			);
+}
+bool aabb_get_overlapping_area(const AABB& a, const AABB& b, Rectangle& rect)
+{
+	if (a.x_max > b.x_min &&
+		b.x_max > a.x_min &&
+		a.y_max > b.y_min &&
+		b.y_max > a.y_min)
+	{
+		rect.x = a.x_max - b.x_min;
+		rect.y = a.y_max - b.y_min;
+		rect.width = a.x_max - rect.x;
+		rect.height = b.y_max - rect.y;
+		return true;
+	}
+	return false;
 }
 
 bool aabb_circle_intersect(const AABB& a, const Circle& b)

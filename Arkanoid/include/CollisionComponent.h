@@ -20,8 +20,6 @@ struct CollisionComponent
 		}
 	};
 
-
-
 	CollisionComponent* colliders = nullptr;
 	int numColliders = 0;
 
