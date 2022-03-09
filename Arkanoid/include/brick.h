@@ -19,7 +19,7 @@ public:
 		onDestroyCallback = nullptr;
 		size = { 64,28 };
 	}
-	void onCollision(Vector2 normal) override;
+	void onCollision(CollisionParams& params) override;
 	void reduceHealth(int amount);
 	
 };

@@ -1,5 +1,10 @@
 #include "input.h"
 
+bool Input::modeSwitchPressed()
+{
+	return IsKeyPressed(KEY_F1);
+}
+
 bool Input::actionPressed() { return (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)); };
 int Input::getHorizontalInput()
 {

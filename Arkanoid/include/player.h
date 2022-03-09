@@ -12,7 +12,8 @@ class Player : public Entity
 
 	int ballIndex = 0;
 	const int nrOfBalls;
-	float shootDelay = 1;
+	const float shootDelay = 0.25f;
+	float shootTimer = 0.25f;
 public:
 	CollisionComponent* collider;
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)
@@ -42,6 +43,12 @@ public:
 		physics->collider = collider;
 		physics->isActive = true;
 		physics->reflectOnCollision = false;
+	}
+
+	void setColor(Color color)
+	{
+		this->color = color;
+		renderer->color = &this->color;
 	}
 
 	Player& operator= (Player&& p) noexcept

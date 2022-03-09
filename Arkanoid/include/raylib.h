@@ -187,7 +187,64 @@
 // Vector2, 2 components
 typedef struct Vector2 {
     float x;                // Vector x component
-    float y;                // Vector y component
+    float y; 
+    
+    //MY ADDED STUFF --DAVID
+    bool operator == (Vector2 r)
+    {
+        return this->x == r.x && this->y == r.y;
+    }
+    bool operator != (Vector2 r)
+    {
+        return this->x != r.x || this->y != r.y;
+    }
+
+    Vector2 operator * (Vector2 r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x * r.x;
+        newVec.y = this->y * r.y;
+        return newVec;
+    }
+
+    Vector2 operator / (Vector2 r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x / r.x;
+        newVec.y = this->y / r.y;
+        return newVec;
+    }
+    Vector2 operator / (int r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x / r;
+        newVec.y = this->y / r;
+        return newVec;
+    }
+    Vector2 operator * (int r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x * r;
+        newVec.y = this->y * r;
+        return newVec;
+    }
+
+    Vector2 operator + (Vector2 r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x + r.x;
+        newVec.y = this->y + r.y;
+        return newVec;
+    }
+    Vector2 operator - (Vector2 r)
+    {
+        Vector2 newVec;
+        newVec.x = this->x - r.x;
+        newVec.y = this->y - r.y;
+        return newVec;
+    }
+
+
 } Vector2;
 
 // Vector3, 3 components
@@ -222,6 +279,7 @@ typedef struct Color {
     unsigned char g;        // Color green value
     unsigned char b;        // Color blue value
     unsigned char a;        // Color alpha value
+
 } Color;
 
 // Rectangle, 4 components

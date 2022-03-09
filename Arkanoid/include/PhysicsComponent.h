@@ -1,5 +1,6 @@
 #pragma once
-#include "CollisionComponent.h"
+#include "common.h"
+struct CollisionComponent;
 struct PhysicsComponent
 {
 	CollisionComponent* collider;

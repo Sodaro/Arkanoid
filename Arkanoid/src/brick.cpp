@@ -4,7 +4,7 @@
 //{
 //}
 
-void Brick::onCollision(Vector2 normal)
+void Brick::onCollision(CollisionParams& params)
 {
 	reduceHealth(1);
 }

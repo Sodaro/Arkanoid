@@ -30,7 +30,7 @@ void draw_circle(const Circle& c)
 	}
 }
 
-bool circle_intersect(const Circle& a, const Circle& b)
+bool circle_intersect(const Circle& a, const Circle& b, Vector2& normal)
 {
 	float dx = b.x - a.x;
 	float dy = b.y - a.y;
@@ -41,7 +41,19 @@ bool circle_intersect(const Circle& a, const Circle& b)
 	double dist = sqrt(dist_sqrd);
 
 	float radius_sum = a.radius + b.radius;
+	if (dist < radius_sum)
+	{
+		if (fabs(dx) < fabs(dy))
+			normal = Vector2{ dx < 0.f ? -1.f : 1.f, 0 };
+		else
+			normal = Vector2{ dx < 0.f ? -1.f : 1.f, 0 };
+	}
 	return dist < radius_sum;
+}
+
+bool line_intersect(const Vector2& line1, const Vector2& line2)
+{
+	return Vector2DotProduct(line1, line2) != 0;
 }
 
 
@@ -62,26 +74,34 @@ AABB AABB::make_from_position_size(vec2_ptr pos, vec2_ptr size)
 	box.y_min = pos->y - size->y / 2;
 	box.x_max = pos->x + size->x / 2;
 	box.y_max = pos->y + size->y / 2;
-	box.centerX = pos->x;
-	box.centerY = pos->y;
 	return box;
 }
 
-void draw_box(const AABB& box)
+AABB AABB::make_from_position_size2(int x1, int y1, int x2, int y2)
+{
+	AABB box;
+	box.x_min = x1;
+	box.x_max = x2;
+	box.y_min = y1;
+	box.y_max = y2;
+	return box;
+}
+
+void draw_box(const AABB& box, Color color)
 {
     Rectangle rect = 
     { 
         box.x_min, 
         box.y_min, 
-        box.x_max - box.x_min, 
-        box.y_max - box.y_min
+        box.x_max, 
+        box.y_max
     };
 
-    DrawRectangleLinesEx(rect, 1, WHITE);
+    DrawRectangleLinesEx(rect, 1, color);
 }
 void draw_rect(const Rectangle rect)
 {
-	DrawRectangleLinesEx(rect, 1, WHITE);
+	DrawRectangle(rect.x, rect.y, rect.width, rect.height, WHITE);
 }
 
 bool aabb_intersect(const AABB& a, const AABB& b)
@@ -101,16 +121,17 @@ bool aabb_get_overlapping_area(const AABB& a, const AABB& b, Rectangle& rect)
 		a.y_max > b.y_min &&
 		b.y_max > a.y_min)
 	{
-		rect.x = a.x_max - b.x_min;
-		rect.y = a.y_max - b.y_min;
-		rect.width = a.x_max - rect.x;
-		rect.height = b.y_max - rect.y;
+		
+		rect.x = fmaxf(a.x_min, b.x_min);
+		rect.y = fmaxf(a.y_min, b.y_min);
+		rect.width = fminf(a.x_max-a.x_min, b.x_max-b.x_min);
+		rect.height = fminf(a.y_max-a.y_min, b.y_max-b.y_min);
 		return true;
 	}
 	return false;
 }
 
-bool aabb_circle_intersect(const AABB& a, const Circle& b)
+bool aabb_circle_intersect(const AABB& a, const Circle& b, Vector2& normal)
 {
 	float clamped_x = Clamp(b.x, a.x_min, a.x_max);
 	float clamped_y = Clamp(b.y, a.y_min, a.y_max);
@@ -121,5 +142,25 @@ bool aabb_circle_intersect(const AABB& a, const Circle& b)
 	float dist_squared = dx * dx + dy * dy;
 	double dist = sqrt(dist_squared);
 
+	if (dist < b.radius)
+	{
+		if (fabs(dx) < fabs(dy))
+			normal = Vector2{ dx < 0.f ? -1.f : 1.f, 0 };
+		else
+			normal = Vector2{ dx < 0.f ? -1.f : 1.f, 0 };
+	}
+
 	return dist < b.radius;
+}
+
+Circle Circle::make_from_position_size(vec2_ptr pos, vec2_ptr size)
+{
+	Circle circle;
+	circle.x = pos->x;
+	circle.y = pos->y;
+	circle.radius = size->x > size->y ? size->x : size->y;
+	return circle;
+
+
+	//TODO: FIX COLLISIONS
 }

@@ -1,6 +1,6 @@
 #pragma once
 constexpr int num_max_bricks = 60;
-constexpr int num_max_balls = 10;
+constexpr int num_max_balls = 50;
 constexpr int num_max_entities = num_max_bricks + num_max_balls + 1;
 
 

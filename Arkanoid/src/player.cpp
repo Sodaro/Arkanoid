@@ -3,15 +3,15 @@
 
 void Player::update(float dt)
 {
-    shootDelay -= dt;
-	if (Input::actionPressed() && shootDelay <= 0)
+    shootTimer -= dt;
+	if (Input::actionPressed() && shootTimer <= 0)
 	{
         Ball& ball = balls[ballIndex];
         ball.setActive();
         ball.pos = pos;
-        ball.pos.y -= ball.size.y + 50;
+        ball.pos.y -= ball.size.y + 5;
         ++ballIndex %= nrOfBalls;
-        shootDelay = 1;
+        shootTimer = shootDelay;
 	}
     int horizontal = Input::getHorizontalInput();
     Vector2 newVelocity;

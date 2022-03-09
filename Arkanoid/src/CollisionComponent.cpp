@@ -5,7 +5,12 @@
 void CollisionComponent::init(ColliderParams params)
 {
 	this->colliders = params.colliders;
-	box = AABB::make_from_position_size(params.pos, params.size);
+	this->isBox = params.isBox;
+	if (params.isBox)
+		box = AABB::make_from_position_size(params.pos, params.size);
+	else
+		circle = Circle::make_from_position_size(params.pos, params.size);
+	
 	this->pos = params.pos;
 	this->size = params.size;
 	this->numColliders = params.numColliders;
@@ -13,22 +18,53 @@ void CollisionComponent::init(ColliderParams params)
 	this->owner = params.owner;
 }
 
-void CollisionComponent::update()
+void CollisionComponent::updateBox()
 {
 	box = AABB::make_from_position_size(pos, size);
 }
 
-Vector2 calculateCollisionNormal(Entity* a, Entity* b, Rectangle& interesection)
+CollisionParams calculateCollisionData(Entity* a, Entity* b)
 {
-	float ax = interesection.x + interesection.width;
-	float ay = interesection.y + interesection.height;
-	float sx = a->pos.x < b->pos.x ? -1.0f : 1.0f;
-	float sy = a->pos.y < b->pos.y ? -1.0f : 1.0f;
+	Vector2 center, bounds;
+	center = b->pos;
+	bounds = b->size / 2;
+	Vector2 distanceToPositiveBounds = center + bounds - a->pos;
+	Vector2 distanceToNegativeBounds = (center - bounds - a->pos);
+	distanceToNegativeBounds = distanceToNegativeBounds * -1;
+	float smallestX = fmin(distanceToPositiveBounds.x, distanceToNegativeBounds.x);
+	float smallestY = fmin(distanceToPositiveBounds.y, distanceToNegativeBounds.y);
+	float smallestDistance = fmin(smallestX, smallestY);
 
-	if (ax <= ay)
-		return Vector2{ sx, 0.0f };
+	CollisionParams params;
+
+	if (smallestDistance == distanceToPositiveBounds.x)
+	{
+		params.contactPoint.x = center.x + bounds.x;
+		params.normal.x = 1;
+	}
+	else if (smallestDistance == distanceToNegativeBounds.x)
+	{
+		params.contactPoint.x = center.x - bounds.x;
+		params.normal.x = -1;
+	}	
+
+	if (smallestDistance == distanceToPositiveBounds.y)
+	{
+		params.contactPoint.y = center.y + bounds.y;
+		params.normal.y = 1;
+	}
 	else
-		return Vector2{0, sy};
+	{
+		params.contactPoint.y = center.y - bounds.y;
+		params.normal.y = -1;
+	}
+
+	if (params.contactPoint.y == 0)
+		params.contactPoint.y = a->pos.y;
+	if (params.contactPoint.x == 0)
+		params.contactPoint.x = a->pos.x;
+
+	return params;
 }
 
 bool CollisionComponent::checkCollisions(Vector2 newPos)
@@ -36,7 +72,10 @@ bool CollisionComponent::checkCollisions(Vector2 newPos)
 	if (!enabled)
 		return false;
 
-	box = AABB::make_from_position_size(&newPos, size);
+	if (isBox)
+		box = AABB::make_from_position_size(&newPos, size);
+	else
+		circle = Circle::make_from_position_size(&newPos, size);
 	for (int i = 0; i < numColliders; ++i)
 	{
 		if (this == &colliders[i])
@@ -47,28 +86,17 @@ bool CollisionComponent::checkCollisions(Vector2 newPos)
 		if (!collider2.enabled)
 			continue;
 
-
-		AABB box2 = collider2.box;
-		Rectangle overlap;
-
-		if (aabb_get_overlapping_area(box, box2, overlap))
+		if (aabb_intersect(box, collider2.box))
 		{
-			Vector2 collisionNormal = calculateCollisionNormal(owner, collider2.owner, overlap);
-			draw_rect(overlap);
-			//Vector2 collisionNormal2 = calculateCollisionNormal(owner, collider2.owner);
-			//float x, y;
-			//x = box.centerX < box2.centerX ? -1.f : 1.f;
-			//y = box.centerY < box2.centerY ? -1.f : 1.f;
-			//dot
+			CollisionParams params = calculateCollisionData(owner, collider2.owner);
+			this->owner->onCollision(params);
+			params.contactPoint = Vector2{ 0,0 };
+			collider2.owner->onCollision(params);
 
-
-			//if (x <= y)
-			//	collisionNormal
-
-			collider2.owner->onCollision(collisionNormal);
-			this->owner->onCollision(collisionNormal);
 			return true;
 		}
+
+
 
 	}
 	return false;

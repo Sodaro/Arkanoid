@@ -1,8 +1,8 @@
 #pragma once
-#include "raylib.h"
+#include "common.h"
 struct RenderComponent;
-struct CollisionComponent;
 struct PhysicsComponent;
+struct CollisionComponent;
 
 class Entity
 {
@@ -22,11 +22,12 @@ public:
 
 	//virtual void onCollision(Entity* owner) = 0;
 	//void assignCollisionCallback();
-	virtual void onCollision(Vector2 normal) {};
+	virtual void onCollision(CollisionParams& params) {};
 	virtual void onLeaveScreen(Vector2 border) {};
 	void assignRenderer(RenderComponent* renderer);
 	void assignPhysics(PhysicsComponent* physics);
 	void assignCollider(CollisionComponent* collider);
+
 
 };
 

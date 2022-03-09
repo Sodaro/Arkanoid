@@ -151,6 +151,7 @@
     <ClCompile Include="src\input.cpp" />
     <ClCompile Include="src\PhysicsComponent.cpp" />
     <ClCompile Include="src\player.cpp" />
+    <ClCompile Include="src\RenderComponent.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ball.h" />

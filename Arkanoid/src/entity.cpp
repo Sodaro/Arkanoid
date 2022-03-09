@@ -1,8 +1,8 @@
-#include "entity.h"
+
 #include "RenderComponent.h"
 #include "PhysicsComponent.h"
 #include "CollisionComponent.h"
-
+#include "entity.h"
 void Entity::setupRenderer()
 {
 	renderer->size = size;

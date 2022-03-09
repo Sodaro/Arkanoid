@@ -18,7 +18,7 @@ public:
 	//	renderer->pos = &pos;
 	//}
 
-	void onCollision(Vector2 normal) override;
+	void onCollision(CollisionParams& params) override;
 
 	void setActive()
 	{
