@@ -27,7 +27,8 @@ public:
 	void assignRenderer(RenderComponent* renderer);
 	void assignPhysics(PhysicsComponent* physics);
 	void assignCollider(CollisionComponent* collider);
-
+	void enable();
+	void disable();
 
 };
 

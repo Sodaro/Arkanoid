@@ -3,19 +3,19 @@
 #include "RenderComponent.h"
 #include "CollisionComponent.h"
 #include "collision.h"
+#include "common.h"
 
 
 class Brick : public Entity
 {
 public:
-	Brick* bricks;
+	//Brick* bricks;
 	int brickIndex = 0;
 	int health = 1;
-	typedef void (*func)(int);
-	func onDestroyCallback;
+	actionInt onDestroyCallback;
 	Brick()
 	{
-		bricks = nullptr;
+		//bricks = nullptr;
 		onDestroyCallback = nullptr;
 		size = { 64,28 };
 	}

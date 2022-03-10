@@ -4,13 +4,16 @@
 typedef Vector2* vec2_ptr;
 typedef int* int_ptr;
 
+class Entity;
 //typedef void (*action);
 //typedef void (*actionInt)(int amount);
 
-typedef void(*actionInt)(int);
+typedef void (*action)();
+typedef void (*actionInt)(int);
 
 struct CollisionParams
 {
+	Entity* colliderObject = nullptr;
 	Vector2 contactPoint = Vector2{0,0};
 	Vector2 normal = Vector2{ 0,0 };
 };

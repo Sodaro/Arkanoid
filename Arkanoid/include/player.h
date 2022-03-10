@@ -5,6 +5,7 @@
 #include "input.h"
 #include "PhysicsComponent.h"
 #include "ball.h"
+#include "common.h"
 
 class Player : public Entity
 {
@@ -15,6 +16,8 @@ class Player : public Entity
 	const float shootDelay = 0.25f;
 	float shootTimer = 0.25f;
 public:
+	int availableBalls = 1;
+	action ballShotCallback;
 	CollisionComponent* collider;
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)
 	{
@@ -25,6 +28,7 @@ public:
 		collider = nullptr;
 		physics = nullptr;
 		balls = nullptr;
+		ballShotCallback = nullptr;
 	}
 
 	Player(RenderComponent* renderer, PhysicsComponent* physics, CollisionComponent* collider, Ball* ballsArr, const int nrOfBalls) : nrOfBalls(nrOfBalls)
@@ -43,6 +47,7 @@ public:
 		physics->collider = collider;
 		physics->isActive = true;
 		physics->reflectOnCollision = false;
+		ballShotCallback = nullptr;
 	}
 
 	void setColor(Color color)

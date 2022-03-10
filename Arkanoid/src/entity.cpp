@@ -62,3 +62,23 @@ void Entity::assignCollider(CollisionComponent* collider)
 	this->collider = collider;
 	collider->owner = this;
 }
+
+void Entity::enable()
+{
+	if (collider != nullptr)
+		collider->enabled = true;
+	if (renderer != nullptr)
+		renderer->isVisible = true;
+	if (physics != nullptr)
+		physics->isActive = true;
+}
+
+void Entity::disable()
+{
+	if (collider != nullptr)
+		collider->enabled = false;
+	if (renderer != nullptr)
+		renderer->isVisible = false;
+	if (physics != nullptr)
+		physics->isActive = false;
+}

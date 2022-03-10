@@ -64,6 +64,8 @@ CollisionParams calculateCollisionData(Entity* a, Entity* b)
 	if (params.contactPoint.x == 0)
 		params.contactPoint.x = a->pos.x;
 
+	params.colliderObject = b;
+
 	return params;
 }
 
@@ -72,10 +74,7 @@ bool CollisionComponent::checkCollisions(Vector2 newPos)
 	if (!enabled)
 		return false;
 
-	if (isBox)
-		box = AABB::make_from_position_size(&newPos, size);
-	else
-		circle = Circle::make_from_position_size(&newPos, size);
+	box = AABB::make_from_position_size(&newPos, size);
 	for (int i = 0; i < numColliders; ++i)
 	{
 		if (this == &colliders[i])
@@ -91,13 +90,11 @@ bool CollisionComponent::checkCollisions(Vector2 newPos)
 			CollisionParams params = calculateCollisionData(owner, collider2.owner);
 			this->owner->onCollision(params);
 			params.contactPoint = Vector2{ 0,0 };
+			params.colliderObject = owner;
 			collider2.owner->onCollision(params);
 
 			return true;
 		}
-
-
-
 	}
 	return false;
 }
