@@ -82,3 +82,11 @@ void Entity::disable()
 	if (physics != nullptr)
 		physics->isActive = false;
 }
+
+Vector2 Entity::getVelocity()
+{
+	if (physics == nullptr)
+		return Vector2{ 0, 0 };
+	
+	return physics->velocity;
+}

@@ -6,6 +6,18 @@ bool Input::modeSwitchPressed()
 }
 
 bool Input::actionPressed() { return (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)); };
+int Input::getVerticalInput()
+{
+	int vertical = 0;
+
+	if (IsKeyPressed(KEY_W) || IsKeyPressed(KEY_UP))
+		vertical -= 1;
+
+	if (IsKeyPressed(KEY_S) || IsKeyPressed(KEY_DOWN))
+		vertical += 1;
+
+	return vertical;
+}
 int Input::getHorizontalInput()
 {
 	int horizontal = 0;

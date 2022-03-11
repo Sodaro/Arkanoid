@@ -1,20 +1,21 @@
-﻿  main.cpp
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(35,14): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(40,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(41,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(42,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(54,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(55,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(56,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(68,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(69,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(70,21): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(140,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(141,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(313,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(342,27): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(382,100): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(382,80): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(382,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\main.cpp(382,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
-  Arkanoid.vcxproj -> C:\Users\david.bang\Documents\CPP\Arkanoid\x64\Debug\Arkanoid.exe
+﻿  game.cpp
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(42,1): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(50,18): warning C4244: 'return': conversion from 'double' to 'float', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(55,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(56,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(57,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(69,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(70,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(71,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(83,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(84,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\game.h(85,25): warning C4244: 'initializing': conversion from 'float' to 'unsigned char', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(82,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(83,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(252,32): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(281,27): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(306,100): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(306,80): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(306,64): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\src\game.cpp(306,48): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+  Arkanoid.vcxproj -> D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\x64\Debug\Arkanoid.exe

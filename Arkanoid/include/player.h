@@ -6,6 +6,7 @@
 #include "PhysicsComponent.h"
 #include "ball.h"
 #include "common.h"
+#include "config.h"
 
 class Player : public Entity
 {
@@ -13,16 +14,16 @@ class Player : public Entity
 
 	int ballIndex = 0;
 	const int nrOfBalls;
-	const float shootDelay = 0.25f;
-	float shootTimer = 0.25f;
+	//const float shootDelay = 0.25f;
+	//float shootTimer = 0.25f;
 public:
 	int availableBalls = 1;
 	action ballShotCallback;
 	CollisionComponent* collider;
 	Player(const int nrOfBalls) : nrOfBalls(nrOfBalls)
 	{
-		pos = { 256,456 };
-		size = { 128,24 };
+		pos = { game_width/2,game_height-player_height-10};
+		size = { player_width,player_height};
 		color = MAGENTA;
 		renderer = nullptr;
 		collider = nullptr;
@@ -37,8 +38,8 @@ public:
 		this->collider = collider;
 		this->physics = physics;
 
-		pos = { 256,456 };
-		size = { 128,24 };
+		pos = { game_width / 2,game_height - player_height - 10 };
+		size = { player_width,player_height };
 		color = MAGENTA;
 		this->renderer->isVisible = true;
 		setupRenderer();

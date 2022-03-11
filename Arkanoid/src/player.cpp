@@ -14,7 +14,7 @@ void Player::update(float dt)
         //shootTimer = shootDelay;
 
         if (ballShotCallback != nullptr)
-            ballShotCallback();
+            (game->*ballShotCallback)();
 
         availableBalls--;
 	}

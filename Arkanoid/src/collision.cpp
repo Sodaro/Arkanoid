@@ -93,8 +93,8 @@ void draw_box(const AABB& box, Color color)
     { 
         box.x_min, 
         box.y_min, 
-        box.x_max, 
-        box.y_max
+		box.x_max - box.x_min,
+		box.y_max - box.y_min
     };
 
     DrawRectangleLinesEx(rect, 1, color);

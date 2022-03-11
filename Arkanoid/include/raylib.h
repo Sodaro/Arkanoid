@@ -199,6 +199,13 @@ typedef struct Vector2 {
         return this->x != r.x || this->y != r.y;
     }
 
+    Vector2& operator += (Vector2 r)
+    {
+        this->x += r.x;
+        this->y += r.y;
+        return *this;
+    }
+
     Vector2 operator * (Vector2 r)
     {
         Vector2 newVec;

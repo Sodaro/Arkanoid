@@ -3,17 +3,19 @@
 #include "RenderComponent.h"
 #include "PhysicsComponent.h"
 #include "CollisionComponent.h"
+#include "config.h"
 
 class Ball : public Entity
 {
-	float addSpeed = 10.f;
-	float maxSpeed = 100.f;
+	float initialSpeed = 60.f;
+	float addSpeed = 20.f;
+	float maxSpeed = 200.f;
 public:
 	int ballIndex = 0;
 	Ball()
 	{
 		onBallLeftScreen = nullptr;
-		size = { 16,16 };
+		size = { ball_width, ball_height};
 	}
 
 	actionInt onBallLeftScreen;
@@ -33,8 +35,8 @@ public:
 	{
 		renderer->isVisible = true;
 		Vector2 newVelocity;
-		newVelocity.x = 40;
-		newVelocity.y = -40;
+		newVelocity.x = initialSpeed;
+		newVelocity.y = -initialSpeed;
 		physics->velocity = newVelocity;
 		physics->isActive = true;
 		collider->enabled = true;

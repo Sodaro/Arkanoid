@@ -14,6 +14,7 @@ protected:
 	void setupRenderer();
 
 public:
+	Game* game;
 	Color color;
 	Vector2 pos, size;
 
@@ -29,6 +30,6 @@ public:
 	void assignCollider(CollisionComponent* collider);
 	void enable();
 	void disable();
-
+	Vector2 getVelocity();
 };
 
