@@ -4,7 +4,7 @@ struct CollisionComponent;
 struct PhysicsComponent
 {
 	CollisionComponent* collider;
-	Vector2 velocity;
+	Vector2 velocity, size;
 	vec2_ptr pos;
 	bool isActive = false, reflectOnCollision = true;
 	PhysicsComponent();

@@ -18,5 +18,5 @@ struct RenderComponent
 	//{
 	//	color = p_color;
 	//}
-	void update(Mode renderMode, Color& gameColor);
+	void update(Mode renderMode);
 };

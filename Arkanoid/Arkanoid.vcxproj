@@ -142,11 +142,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="include\level_editor.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\ball.cpp" />
     <ClCompile Include="src\brick.cpp" />
     <ClCompile Include="src\collision.cpp" />
     <ClCompile Include="src\CollisionComponent.cpp" />
+    <ClCompile Include="src\editor_brick.cpp" />
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\input.cpp" />
@@ -161,6 +163,8 @@
     <ClInclude Include="include\CollisionComponent.h" />
     <ClInclude Include="include\common.h" />
     <ClInclude Include="include\config.h" />
+    <ClInclude Include="include\editor_brick.h" />
+    <ClInclude Include="include\level_editor.h" />
     <ClInclude Include="include\entity.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\input.h" />

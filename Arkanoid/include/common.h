@@ -28,6 +28,8 @@ struct CollisionParams
 	Vector2 normal = Vector2{ 0,0 };
 };
 
+enum class BrickType { Green, Purple, Blue, Yellow, Red, Gray, None, Count };
+
 constexpr Color neon_gray = { 229, 229, 229,255 };
 constexpr Color neon_blue = { 42,255,255,255 };
 constexpr Color neon_yellow = { 255,255,68,255 };

@@ -45,6 +45,7 @@ public:
 		setupRenderer();
 		balls = ballsArr;
 		physics->pos = &pos;
+		physics->size = size;
 		physics->collider = collider;
 		physics->isActive = true;
 		physics->reflectOnCollision = false;

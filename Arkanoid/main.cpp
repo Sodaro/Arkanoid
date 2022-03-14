@@ -1,6 +1,7 @@
 #include "raylib.h"
 #include "config.h"
 #include "game.h"
+#include "level_editor.h"
 
 void drawMenu(int selectedIndex)
 {
@@ -40,8 +41,8 @@ int main()
     State state = State::Menu;
 
     Game game;
-    game.init(&target);
-
+    LevelEditor editor{target};
+    game.init(target);
 
     int choice = 1;
 
@@ -105,6 +106,8 @@ int main()
             state = State::Menu;
             break;
         case State::Editor:
+            editor.run();
+            state = State::Menu;
             break;
         default:
             break;

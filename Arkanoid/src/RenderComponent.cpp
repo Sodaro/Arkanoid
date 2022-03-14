@@ -24,7 +24,7 @@ RenderComponent::RenderComponent(vec2_ptr pos, Vector2 size, Color* color)
 	this->size = size;
 	this->color = color;
 }
-void RenderComponent::update(Mode renderMode, Color& gameColor)
+void RenderComponent::update(Mode renderMode)
 {
 	if (pos != nullptr && color != nullptr)
 	{

@@ -15,6 +15,7 @@ Entity::Entity()
 	renderer = nullptr;
 	physics = nullptr;
 	collider = nullptr;
+	game = nullptr;
 	color = WHITE;
 	pos = { 0,0 };
 	size = { 0,0 };
@@ -22,6 +23,7 @@ Entity::Entity()
 
 Entity::Entity(RenderComponent* renderer, PhysicsComponent* physics, CollisionComponent* collider) : renderer(renderer), physics(physics), collider(collider)
 {
+	game = nullptr;
 	color = WHITE;
 	color = WHITE;
 	pos = { 0,0 };
@@ -55,6 +57,7 @@ void Entity::assignPhysics(PhysicsComponent* physics)
 {
 	this->physics = physics;
 	physics->pos = &pos;
+	physics->size = size;
 }
 
 void Entity::assignCollider(CollisionComponent* collider)

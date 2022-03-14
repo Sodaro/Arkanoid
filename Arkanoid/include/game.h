@@ -108,6 +108,6 @@ class Game
     void reset();
 
     public:
-        void init(RenderTexture2D* target);
+        void init(RenderTexture2D& target);
         void run();
 };

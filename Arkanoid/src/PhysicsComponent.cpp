@@ -4,19 +4,20 @@
 
 #include "PhysicsComponent.h"
 #include "CollisionComponent.h"
+#include <iostream>
 
 PhysicsComponent::PhysicsComponent()
 {
 	collider = nullptr;
 	pos = nullptr;
-	velocity = Vector2{ 0,0 };
+	size = velocity = Vector2{ 0,0 };
 	isActive = false;
 }
 
 PhysicsComponent::PhysicsComponent(CollisionComponent& collider) : collider(&collider)
 {
 	pos = nullptr;
-	velocity = Vector2{ 0,0 };
+	size = velocity = Vector2{ 0,0 };
 	isActive = false;
 }
 
@@ -36,19 +37,25 @@ void PhysicsComponent::update(double dt)
 
 bool PhysicsComponent::moveInsideScreen(float dx, float dy)
 {
-	if (pos->x < 0)
-		pos->x = 0;
-	else if (pos->x > game_width)
-		pos->x = game_width;
-	if (pos->y < 0)
-		pos->y = 0;
-	//else if (pos->y > game_height)
-	//	pos->y = game_height;
+	float xbounds = 0, ybounds = 0;
+
+	if (size != Vector2{0,0})
+	{
+		xbounds = (float)size.x / 2;
+		ybounds = (float)size.y / 2;
+	}
+	if (pos->x - xbounds <= 0)
+		pos->x = xbounds;
+	else if (pos->x + xbounds > game_width)
+		pos->x = game_width - xbounds;
+
+	if (pos->y < ybounds)
+		pos->y = ybounds;
 
 
-	bool left = pos->x + dx < 0;
-	bool right = pos->x + dx >= game_width;
-	bool up = pos->y + dy < 0;
+	bool left = pos->x + dx < xbounds;
+	bool right = pos->x + dx >= game_width - xbounds;
+	bool up = pos->y + dy < ybounds;
 	//bool down = pos->y + dy >= game_height;
 	CollisionParams params;
 	if (left || right || up)
@@ -64,7 +71,7 @@ bool PhysicsComponent::moveInsideScreen(float dx, float dy)
 		//	side.y = 1;
 		params.normal = side;
 		collider->owner->onCollision(params);
-		return false;
+		//return false;
 	}
 
 	pos->x += dx;

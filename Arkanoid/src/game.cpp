@@ -93,12 +93,12 @@ void Game::setup()
         brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
         switch (y)
         {
-        case 0: brick.initializeTypeData(Brick::Type::Gray);   break;
-        case 1: brick.initializeTypeData(Brick::Type::Red);    break;
-        case 2: brick.initializeTypeData(Brick::Type::Yellow); break;
-        case 3: brick.initializeTypeData(Brick::Type::Blue);   break;
-        case 4: brick.initializeTypeData(Brick::Type::Purple); break;
-        case 5: brick.initializeTypeData(Brick::Type::Green);  break;
+        case 0: brick.initializeTypeData(BrickType::Gray);   break;
+        case 1: brick.initializeTypeData(BrickType::Red);    break;
+        case 2: brick.initializeTypeData(BrickType::Yellow); break;
+        case 3: brick.initializeTypeData(BrickType::Blue);   break;
+        case 4: brick.initializeTypeData(BrickType::Purple); break;
+        case 5: brick.initializeTypeData(BrickType::Green);  break;
         }
 
         brick.onDestroyCallback = &Game::onBrickDestroyed;
@@ -199,10 +199,10 @@ void Game::reset()
 
 }
 
-void Game::init(RenderTexture2D* target)
+void Game::init(RenderTexture2D& target)
 {
     destroyWav = LoadSound("resources/brick_destroy.wav");
-    targetTexture = *target;
+    targetTexture = target;
 }
 
 void Game::drawUIText()
@@ -271,6 +271,7 @@ void Game::run()
         {
             time = GetTime();
             delta_time = (time - prev_time);
+            prev_time = time;
 
             currentLerpTime += delta_time;
             if (currentLerpTime >= currentDuration)
@@ -333,7 +334,7 @@ void Game::run()
             {
                 if (renderers[i].isVisible)
                 {
-                    renderers[i].update((RenderComponent::Mode)renderMode, currentColor);
+                    renderers[i].update((RenderComponent::Mode)renderMode);
                 }
             }
 
@@ -345,7 +346,7 @@ void Game::run()
 
             //DrawFPS(0, 0);
 
-            prev_time = time;
+            
 
             isRunning = !WindowShouldClose();
             gameOver = lives <= 0;

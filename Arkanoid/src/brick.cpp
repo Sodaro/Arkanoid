@@ -4,34 +4,37 @@
 //{
 //}
 
-void Brick::initializeTypeData(Type type)
+void Brick::initializeTypeData(BrickType type)
 {
 	switch (type)
 	{
-	case Brick::Type::Green:
+	case BrickType::Green:
 		color = neon_green;
 		score = brick_green_score;
 		break;
-	case Brick::Type::Purple:
+	case BrickType::Purple:
 		color = neon_purple;
 		score = brick_purple_score;
 		break;
-	case Brick::Type::Blue:
+	case BrickType::Blue:
 		color = neon_blue;
 		score = brick_blue_score;
 		break;
-	case Brick::Type::Yellow:
+	case BrickType::Yellow:
 		color = neon_yellow;
 		score = brick_yellow_score;
 		break;
-	case Brick::Type::Red:
+	case BrickType::Red:
 		color = neon_red;
 		score = brick_red_score;
 		break;
-	case Brick::Type::Gray:
+	case BrickType::Gray:
 		color = neon_gray;
 		score = brick_gray_score;
 		health = 2;
+		break;
+	case BrickType::None:
+		color = Color{ 0,0,0,0 };
 		break;
 	default:
 		break;
