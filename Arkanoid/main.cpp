@@ -2,6 +2,9 @@
 #include "config.h"
 #include "game.h"
 #include "level_editor.h"
+#include <fstream>
+#include <json.hpp>
+#include "entity_data.h"
 
 void drawMenu(int selectedIndex)
 {
@@ -32,17 +35,43 @@ int main()
     InitAudioDevice();
     SetTargetFPS(60);
 
-    
- 
-
     RenderTexture2D target = LoadRenderTexture(game_width, game_height);
     enum class State { Menu, InGame, Editor };
 
     State state = State::Menu;
+    Data data;
 
-    Game game;
-    LevelEditor editor{target};
-    game.init(target);
+
+    std::ifstream file("game_data.json");
+    nlohmann::json j;
+    file >> j;
+    Game game{target, data};
+
+    int index = 0;
+    for (auto& obj : j["bricks"])
+    {
+        auto colorArr = obj["color1"];
+        std::cout << (int)colorArr[0].get<unsigned char>() << std::endl;
+        data.brickData[index].color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>()};
+        colorArr = obj["color2"];
+        data.brickData[index].color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+        data.brickData[index].score = obj["score"].get<int>();
+        data.brickData[index].health = obj["health"].get<int>();
+        index++;
+    }
+    auto colorArr = j["ball"]["color1"];
+    data.ballData.color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+    colorArr = j["ball"]["color2"];
+    data.ballData.color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+    
+    colorArr = j["player"]["color1"];
+    data.playerData.color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+    colorArr = j["player"]["color2"];
+    data.playerData.color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+
+
+    LevelEditor editor{target, data};
+    //game.init(target);
 
     int choice = 1;
 

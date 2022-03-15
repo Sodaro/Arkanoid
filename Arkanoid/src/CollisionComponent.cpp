@@ -14,7 +14,7 @@ void CollisionComponent::init(ColliderParams params)
 	this->pos = params.pos;
 	this->size = params.size;
 	this->numColliders = params.numColliders;
-	enabled = false;
+	enabled = true;
 	this->owner = params.owner;
 }
 

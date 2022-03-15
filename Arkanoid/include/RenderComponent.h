@@ -1,13 +1,9 @@
 #pragma once
 #include "common.h"
 
-
-
-Color multiplyColor(Color& a, Color& b);
-
 struct RenderComponent
 {
-	Color* color;
+	Color* color1, *color2;
 	vec2_ptr pos;
 	Vector2 size;
 	bool isVisible;

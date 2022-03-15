@@ -1,4 +1,18 @@
-﻿  level_editor.cpp
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\level_editor.cpp(72,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\Arkanoid\include\level_editor.cpp(73,22): warning C4244: 'initializing': conversion from 'float' to 'int', possible loss of data
-  Arkanoid.vcxproj -> D:\Documents\!SchoolStuff\futuregames\CPP\Arkanoid\x64\Debug\Arkanoid.exe
+﻿  RenderComponent.cpp
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(7,17): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(8,17): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(9,17): warning C4244: '=': conversion from 'float' to 'unsigned char', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(31,27): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(31,27): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(31,55): warning C4838: conversion from 'double' to 'float' requires a narrowing conversion
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(31,55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(45,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(45,47): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(45,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(45,31): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(51,59): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(51,47): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(51,39): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(51,31): warning C4244: 'argument': conversion from 'float' to 'int', possible loss of data
+C:\Users\david.bang\Documents\CPP\Arkanoid\Arkanoid\src\RenderComponent.cpp(32,9): warning C4101: 'darker': unreferenced local variable
+  Arkanoid.vcxproj -> C:\Users\david.bang\Documents\CPP\Arkanoid\x64\Debug\Arkanoid.exe

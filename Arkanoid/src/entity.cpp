@@ -6,7 +6,8 @@
 void Entity::setupRenderer()
 {
 	renderer->size = size;
-	renderer->color = &color;
+	renderer->color1 = &color1;
+	renderer->color2 = &color2;
 	renderer->pos = &pos;
 }
 
@@ -16,7 +17,7 @@ Entity::Entity()
 	physics = nullptr;
 	collider = nullptr;
 	game = nullptr;
-	color = WHITE;
+	color1 = color2 = WHITE;
 	pos = { 0,0 };
 	size = { 0,0 };
 }
@@ -24,8 +25,7 @@ Entity::Entity()
 Entity::Entity(RenderComponent* renderer, PhysicsComponent* physics, CollisionComponent* collider) : renderer(renderer), physics(physics), collider(collider)
 {
 	game = nullptr;
-	color = WHITE;
-	color = WHITE;
+	color1 = color2 = WHITE;
 	pos = { 0,0 };
 	size = { 0,0 };
 	if (renderer != nullptr)

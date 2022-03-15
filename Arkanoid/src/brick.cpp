@@ -1,44 +1,16 @@
 #include "brick.h"
 #include "config.h"
+#include "entity_data.h"
 //void Brick::render()
 //{
 //}
 
-void Brick::initializeTypeData(BrickType type)
+void Brick::initializeTypeData(Data::BrickType type, Color c1, Color c2, int score)
 {
-	switch (type)
-	{
-	case BrickType::Green:
-		color = neon_green;
-		score = brick_green_score;
-		break;
-	case BrickType::Purple:
-		color = neon_purple;
-		score = brick_purple_score;
-		break;
-	case BrickType::Blue:
-		color = neon_blue;
-		score = brick_blue_score;
-		break;
-	case BrickType::Yellow:
-		color = neon_yellow;
-		score = brick_yellow_score;
-		break;
-	case BrickType::Red:
-		color = neon_red;
-		score = brick_red_score;
-		break;
-	case BrickType::Gray:
-		color = neon_gray;
-		score = brick_gray_score;
-		health = 2;
-		break;
-	case BrickType::None:
-		color = Color{ 0,0,0,0 };
-		break;
-	default:
-		break;
-	}
+	this->type = type;
+	this->score = score;
+	color1 = c1;
+	color2 = c2;
 }
 
 void Brick::onCollision(CollisionParams& params)

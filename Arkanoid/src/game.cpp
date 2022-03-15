@@ -1,26 +1,12 @@
 #include "game.h"
 #include "raylib.h"
-
+#include <iostream>
+#include <fstream>
+#include <string>
+#include "json.hpp"
+#include "entity_data.h"
 void Game::onBrickDestroyed(int index)
 {
-    int aboveIndex = index - bricksPerRow;
-    int leftIndex = index - 1;
-    int rightIndex = index + 1;
-    if (aboveIndex >= 0)
-    {
-        if (bricks[aboveIndex].health > 0)
-            bricks[aboveIndex].enable();
-    }
-    if (leftIndex >= 0)
-    {
-        if (bricks[leftIndex].health > 0)
-            bricks[leftIndex].enable();
-    }
-    if (rightIndex < bricksPerRow)
-    {
-        if (bricks[rightIndex].health > 0)
-            bricks[rightIndex].enable();
-    }
     destroyedBrickCount++;
     bricksSinceLastBall++;
     if (bricksSinceLastBall >= bricksNeededForNextBall)
@@ -40,7 +26,7 @@ void Game::onBrickDestroyed(int index)
     SetSoundPitch(destroyWav, pitch);
     PlaySound(destroyWav);
 
-    if (destroyedBrickCount >= num_max_bricks)
+    if (destroyedBrickCount >= numCreatedBricks)
         isGameWon = true;
 }
 
@@ -56,7 +42,6 @@ void Game::onBallLeftScreen(int index)
         lives--;
         player.availableBalls++;
     }
-
 }
 
 void Game::onBallShot()
@@ -73,6 +58,7 @@ void Game::setup()
 
     numActiveBalls = 0;
     destroyedBrickCount = 0;
+    numCreatedBricks = 0;
 
     score = 0;
     scoreText = "0";
@@ -81,6 +67,17 @@ void Game::setup()
 
     int brickOffsetX = bricks[0].size.x / 2;
     int brickOffsetY = bricks[0].size.y / 2;
+
+    std::ifstream file("level.txt");
+    std::string line, content;
+    int index = 0;
+    if (file.is_open())
+    {
+        while (std::getline(file, line))
+        {
+            content += line;
+        }
+    }
 
     for (int i = 0; i < num_max_bricks; i++)
     {
@@ -91,16 +88,20 @@ void Game::setup()
         RenderComponent* renderer = &renderers[entityIndex];
         brick.assignRenderer(renderer);
         brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
-        switch (y)
-        {
-        case 0: brick.initializeTypeData(BrickType::Gray);   break;
-        case 1: brick.initializeTypeData(BrickType::Red);    break;
-        case 2: brick.initializeTypeData(BrickType::Yellow); break;
-        case 3: brick.initializeTypeData(BrickType::Blue);   break;
-        case 4: brick.initializeTypeData(BrickType::Purple); break;
-        case 5: brick.initializeTypeData(BrickType::Green);  break;
-        }
+        int dataIndex = 0;
+        //Data::BrickData data = Data::brickData[0].color1, Data::brickData[0].color2, Data::brickData[0].score
 
+        switch (content[i])
+        {
+        case 'G': dataIndex = (int)Data::BrickType::Six;   break;
+        case 'y': dataIndex = (int)Data::BrickType::Four;  break;
+        case 'r': dataIndex = (int)Data::BrickType::Five;  break;
+        case 'p': dataIndex = (int)Data::BrickType::Two;   break;
+        case 'b': dataIndex = (int)Data::BrickType::Three; break;
+        case 'g': dataIndex = (int)Data::BrickType::One;   break;
+        case 'n': dataIndex = (int)Data::BrickType::None;  break;
+        }  
+        bricks[i].initializeTypeData((Data::BrickType)dataIndex, data->brickData[dataIndex].color1, data->brickData[dataIndex].color2, data->brickData[dataIndex].score);
         brick.onDestroyCallback = &Game::onBrickDestroyed;
 
 
@@ -113,15 +114,13 @@ void Game::setup()
         brick.assignCollider(collider);
         renderer->isVisible = true;
 
-        brick.game = this;
+        if (bricks[i].type == Data::BrickType::None)
+            bricks[i].disable();
+        else
+            numCreatedBricks++;
 
-        //TODO: DO NOT SEND PTR TO ALL BRICKS
+        brick.game = this;
         brick.brickIndex = entityIndex;
-        // brick.bricks = bricks;
-        if (i >= num_max_bricks - bricksPerRow)
-        {
-            collider->enabled = true;
-        }
     }
 
     for (int i = 0; i < num_max_balls; i++)
@@ -143,7 +142,7 @@ void Game::setup()
 
         ball.game = this;
 
-        ball.color = ball_color;
+        ball.color1 = ball_color;
 
         ball.assignRenderer(renderer);
 
@@ -187,7 +186,8 @@ void Game::reset()
         else
             brick.health = 1;
 
-        brick.enable();
+        if (brick.type != Data::BrickType::None)
+            brick.enable();
     }
 
     player.availableBalls = 1;
@@ -198,13 +198,6 @@ void Game::reset()
     bricksNeededForNextBall = 2;
 
 }
-
-void Game::init(RenderTexture2D& target)
-{
-    destroyWav = LoadSound("resources/brick_destroy.wav");
-    targetTexture = target;
-}
-
 void Game::drawUIText()
 {
     std::string livesStr = "Lives: " + std::to_string(lives);
@@ -227,6 +220,13 @@ void Game::drawRenderTexture()
     EndDrawing();
 }
 
+Game::Game(RenderTexture2D& target, Data& data)
+{
+    this->targetTexture = target;
+    this->data = &data;
+    destroyWav = LoadSound("resources/brick_destroy.wav");
+}
+
 void Game::run()
 {
     Color (Game::*ease)(Color&, Color&, float);
@@ -234,8 +234,8 @@ void Game::run()
     int renderMode = 0;
     int nrOfPhysicsObjects = sizeof(physicsComponents) / sizeof(PhysicsComponent);
 
-    double time = 0;
-    double prev_time = 0;
+    double time = GetTime();
+    double prev_time = time;
     double delta_time;
 
     const int nrOfColors = 2;
@@ -271,35 +271,9 @@ void Game::run()
         {
             time = GetTime();
             delta_time = (time - prev_time);
-            prev_time = time;
+            
 
             currentLerpTime += delta_time;
-            if (currentLerpTime >= currentDuration)
-            {
-                currentLerpTime = 0;
-                forwardLerping = !forwardLerping;
-                //if (forwardLerping)
-                //{
-                //    currentDuration = inDuration;
-                //    //ease = &Game::easeInColor;
-                //}
-                //else
-                //{
-                //    currentDuration = outDuration;
-                //    //ease = &Game::easeOutColor;
-                //}
-
-
-                prevColor = targetColor;
-
-                colorIndex++;
-                colorIndex %= nrOfColors;
-                targetColor = colors[colorIndex];
-
-            }
-
-            //currentColor = (this->*ease)(prevColor, targetColor, currentLerpTime / currentDuration);
-
 
             //player logic update
             player.update(delta_time);
@@ -316,9 +290,6 @@ void Game::run()
             {
                 balls[i].handleOutsideScreen();
             }
-
-
-
 
             BeginTextureMode(targetTexture);
 
@@ -343,10 +314,7 @@ void Game::run()
 
             drawRenderTexture();
 
-
-            //DrawFPS(0, 0);
-
-            
+            prev_time = time;
 
             isRunning = !WindowShouldClose();
             gameOver = lives <= 0;

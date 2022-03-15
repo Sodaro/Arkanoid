@@ -24,7 +24,7 @@ public:
 	{
 		pos = { game_width/2,game_height-player_height-10};
 		size = { player_width,player_height};
-		color = MAGENTA;
+		color1 = color2 = MAGENTA;
 		renderer = nullptr;
 		collider = nullptr;
 		physics = nullptr;
@@ -40,7 +40,7 @@ public:
 
 		pos = { game_width / 2,game_height - player_height - 10 };
 		size = { player_width,player_height };
-		color = MAGENTA;
+		color1 = MAGENTA;
 		this->renderer->isVisible = true;
 		setupRenderer();
 		balls = ballsArr;
@@ -54,8 +54,8 @@ public:
 
 	void setColor(Color color)
 	{
-		this->color = color;
-		renderer->color = &this->color;
+		this->color1 = this->color2 = color;
+		renderer->color1 = &this->color1;
 	}
 
 	Player& operator= (Player&& p) noexcept

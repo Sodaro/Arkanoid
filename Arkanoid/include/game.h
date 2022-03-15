@@ -9,11 +9,11 @@
 #include "raymath.h"
 #include "config.h"
 #include <string>
-
-
+#include "entity_data.h"
 
 class Game
 {
+    Data* data;
     RenderTexture2D targetTexture;
     Brick bricks[num_max_bricks];
     Ball balls[num_max_balls];
@@ -21,12 +21,15 @@ class Game
     CollisionComponent colliders[num_max_entities] = {};
     PhysicsComponent physicsComponents[num_max_balls + 1] = {};
     Player player{ num_max_balls };
-    int lives = 3;
+    
 
     bool isRunning = true;
     bool gameOver = false;
     bool isGameWon = false;
 
+
+    int lives = 3;
+    int numCreatedBricks = 0;
     int numActiveBalls = 0;
     int destroyedBrickCount = 0;
 
@@ -108,6 +111,6 @@ class Game
     void reset();
 
     public:
-        void init(RenderTexture2D& target);
+        Game(RenderTexture2D& target, Data& data);
         void run();
 };

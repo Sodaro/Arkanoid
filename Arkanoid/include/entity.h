@@ -15,7 +15,7 @@ protected:
 
 public:
 	Game* game;
-	Color color;
+	Color color1, color2;
 	Vector2 pos, size;
 
 	Entity();

@@ -22,14 +22,4 @@ constexpr int screen_height = game_height*2;
 constexpr int bricksPerRow = 7;
 constexpr int bricksPerColumn = 6;
 
-
-
-
-
 //SCORES { Green, Purple, Blue, Yellow, Red, Gray };
-constexpr int brick_green_score = 50;
-constexpr int brick_purple_score = 100;
-constexpr int brick_blue_score = 150;
-constexpr int brick_yellow_score = 200;
-constexpr int brick_red_score = 250;
-constexpr int brick_gray_score = 300;
