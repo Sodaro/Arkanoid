@@ -9,10 +9,12 @@
 #include "raymath.h"
 #include "config.h"
 #include <string>
-#include "entity_data.h"
+#include "game_data.h"
+#include <vector>
 
 class Game
 {
+    std::vector<std::string> levels;
     Data* data;
     RenderTexture2D targetTexture;
     Brick bricks[num_max_bricks];
@@ -106,9 +108,11 @@ class Game
 
     void onBallShot();
 
-    void setup();
+    bool setup();
 
     void reset();
+
+    void listLevels();
 
     public:
         Game(RenderTexture2D& target, Data& data);

@@ -4,7 +4,7 @@
 #include <fstream>
 #include <string>
 #include "json.hpp"
-#include "entity_data.h"
+#include <filesystem>
 void Game::onBrickDestroyed(int index)
 {
     destroyedBrickCount++;
@@ -44,14 +44,28 @@ void Game::onBallLeftScreen(int index)
     }
 }
 
+void Game::listLevels()
+{
+    levels.clear();
+    std::string path = std::filesystem::current_path().string() + ".\\levels\\";
+    for (const auto& file : std::filesystem::directory_iterator(path))
+    {
+        std::filesystem::path name = file.path().filename();
+        if (name.extension() == ".txt")
+        {
+            std::cout << "[" << levels.size() << "] - " << name << std::endl;
+            levels.push_back(".\\levels\\" + name.string());
+        }
+    }
+}
+
 void Game::onBallShot()
 {
     numActiveBalls++;
 }
 
-void Game::setup()
+bool Game::setup()
 {
-
     isRunning = true;
     gameOver = false;
     isGameWon = false;
@@ -68,7 +82,48 @@ void Game::setup()
     int brickOffsetX = bricks[0].size.x / 2;
     int brickOffsetY = bricks[0].size.y / 2;
 
-    std::ifstream file("level.txt");
+    std::size_t pos{};
+    std::string input;
+    int levelIndex = 0;
+    system("cls");
+    listLevels();
+
+    //TODO: make a level manager for listing levels and managing current level (for both editing and playing)
+    std::string lvlpath = "";
+    if (levels.size() == 0)
+        std::cout << "No levels found" << std::endl;
+    else
+    {
+        std::cout << "Select file to open (index number): " << std::endl;
+        try
+        {
+            bool validIndex = true;
+            do
+            {
+                if (!validIndex)
+                    std::cout << "No level with given index" << std::endl;
+
+                validIndex = false;
+                std::cin >> input;
+                levelIndex = std::stoi(input);
+            } while (levelIndex < 0 || levelIndex >= levels.size());
+            lvlpath = levels[levelIndex];
+        }
+        catch (std::invalid_argument const& ex)
+        {
+            std::cout << "std::invalid_argument::what(): " << ex.what() << '\n';
+            return false;
+        }
+        catch (std::out_of_range const& ex)
+        {
+            std::cout << "std::out_of_range::what(): " << ex.what() << '\n';
+            const long long ll{ std::stoll(input, &pos) };
+            std::cout << "std::stoll('" << input << "'): " << ll << "; pos: " << pos << '\n';
+            return false;
+        }
+    }
+
+    std::ifstream file(lvlpath);
     std::string line, content;
     int index = 0;
     if (file.is_open())
@@ -77,6 +132,10 @@ void Game::setup()
         {
             content += line;
         }
+    }
+    else
+    {
+        return false;
     }
 
     for (int i = 0; i < num_max_bricks; i++)
@@ -93,15 +152,17 @@ void Game::setup()
 
         switch (content[i])
         {
-        case 'G': dataIndex = (int)Data::BrickType::Six;   break;
-        case 'y': dataIndex = (int)Data::BrickType::Four;  break;
-        case 'r': dataIndex = (int)Data::BrickType::Five;  break;
-        case 'p': dataIndex = (int)Data::BrickType::Two;   break;
-        case 'b': dataIndex = (int)Data::BrickType::Three; break;
-        case 'g': dataIndex = (int)Data::BrickType::One;   break;
-        case 'n': dataIndex = (int)Data::BrickType::None;  break;
-        }  
-        bricks[i].initializeTypeData((Data::BrickType)dataIndex, data->brickData[dataIndex].color1, data->brickData[dataIndex].color2, data->brickData[dataIndex].score);
+        case '6': dataIndex = (int)Data::BrickType::Six;   break;
+        case '5': dataIndex = (int)Data::BrickType::Five;  break;
+        case '4': dataIndex = (int)Data::BrickType::Four;  break;
+        case '3': dataIndex = (int)Data::BrickType::Three; break;
+        case '2': dataIndex = (int)Data::BrickType::Two;   break;
+        case '1': dataIndex = (int)Data::BrickType::One;   break;
+        case '0': dataIndex = (int)Data::BrickType::None;  break;
+        }
+
+        Data::BrickData brickData = data->brickData[dataIndex];
+        bricks[i].initializeTypeData((Data::BrickType)dataIndex, brickData.color1, brickData.color2, brickData.outline, brickData.score, brickData.health);
         brick.onDestroyCallback = &Game::onBrickDestroyed;
 
 
@@ -132,8 +193,6 @@ void Game::setup()
         RenderComponent* renderer = &renderers[entityIndex];
         Ball& ball = balls[i];
 
-        //ball = Ball{renderer, physics, collider };
-
         params.pos = &ball.pos;
         params.size = &ball.size;
         params.owner = &ball;
@@ -142,7 +201,9 @@ void Game::setup()
 
         ball.game = this;
 
-        ball.color1 = ball_color;
+        ball.color1  = data->ballData.color1;
+        ball.color2  = data->ballData.color2;
+        ball.outline = data->ballData.outline;
 
         ball.assignRenderer(renderer);
 
@@ -159,7 +220,7 @@ void Game::setup()
     PhysicsComponent* physics = &physicsComponents[++physicsIndex];
     RenderComponent* renderer = &renderers[num_max_entities - 1];
     player = Player{ renderer, physics, collider, balls, num_max_balls };
-    player.setColor(player_color);
+    player.setColor(data->playerData.color1, data->playerData.color2, data->playerData.outline);
     player.ballShotCallback = &Game::onBallShot;
 
     player.game = this;
@@ -170,6 +231,7 @@ void Game::setup()
     params.isBox = true;
     collider->init(params);
     collider->enabled = true;
+    return true;
 }
 
 void Game::reset()
@@ -181,11 +243,7 @@ void Game::reset()
     {
         int y = i / bricksPerRow;
         Brick& brick = bricks[i];
-        if (y == 0)
-            brick.health = 2;
-        else
-            brick.health = 1;
-
+        brick.resetHealth();
         if (brick.type != Data::BrickType::None)
             brick.enable();
     }
@@ -202,14 +260,16 @@ void Game::drawUIText()
 {
     std::string livesStr = "Lives: " + std::to_string(lives);
     std::string unlockStr = "New Ball in: " + std::to_string(bricksNeededForNextBall - bricksSinceLastBall);
+    std::string multipStr = "Multip:" + std::to_string(numActiveBalls) + "x";
+    DrawText(livesStr.c_str(), 0, game_height - 50, 12, WHITE);
+    DrawText(unlockStr.c_str(), 0, game_height - 20, 12, WHITE);
 
-    DrawText(livesStr.c_str(), 0, game_height - 50, 16, WHITE);
-    DrawText(unlockStr.c_str(), 0, game_height - 20, 16, WHITE);
-    DrawText(scoreText.c_str(), game_width - 100, game_height - 20, 16, WHITE);
+    DrawText(scoreText.c_str(), game_width - 100, game_height - 20, 12, WHITE);
+    DrawText(multipStr.c_str(), game_width - 100, game_height - 50, 12, WHITE);
 
     if (isGameWon)
     {
-        DrawText("You won!", game_width / 2 - (8 * 5), game_height / 2, 16, WHITE);
+        DrawText("You won!", game_width / 2 - 60, game_height / 2 - 40, 32, WHITE);
     }
 }
 
@@ -231,19 +291,8 @@ void Game::run()
 {
     Color (Game::*ease)(Color&, Color&, float);
 
-    int renderMode = 0;
+    int renderMode = (int)RenderComponent::Mode::FILL_LINES;
     int nrOfPhysicsObjects = sizeof(physicsComponents) / sizeof(PhysicsComponent);
-
-    double time = GetTime();
-    double prev_time = time;
-    double delta_time;
-
-    const int nrOfColors = 2;
-    Color currentColor, targetColor, prevColor;
-    Color colors[nrOfColors] = { Color{100,100,100,255}, Color{255,255,255,255} };
-
-    currentColor = prevColor = colors[0];
-    targetColor = colors[0];
 
     bool forwardLerping = true;
     float currentLerpTime = 0;
@@ -257,8 +306,13 @@ void Game::run()
 
     Rectangle gradientRect = { 0,0,game_width, game_height };
 
-    setup();
+    if (!setup())
+        return;
     reset();
+
+    double time = GetTime();
+    double prev_time = time;
+    double delta_time;
 
     while (isRunning == true)// Detect window close button or ESC key
     {

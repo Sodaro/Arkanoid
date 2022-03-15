@@ -52,10 +52,14 @@ public:
 		ballShotCallback = nullptr;
 	}
 
-	void setColor(Color color)
+	void setColor(Color c1, Color c2, Color o)
 	{
-		this->color1 = this->color2 = color;
+		color1 = c1;
+		color2 = c2;
+		outline = o;
 		renderer->color1 = &this->color1;
+		renderer->color2 = &this->color2;
+		renderer->outline = &this->outline;
 	}
 
 	Player& operator= (Player&& p) noexcept

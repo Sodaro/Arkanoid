@@ -4,7 +4,8 @@
 #include <raylib.h>
 #include <string>
 #include <vector>
-#include "entity_data.h"
+#include "game_data.h"
+
 class LevelEditor
 {
     //float time_between_clicks = 0.5f;

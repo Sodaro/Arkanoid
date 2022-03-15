@@ -4,8 +4,9 @@
 #include "level_editor.h"
 #include <fstream>
 #include <json.hpp>
-#include "entity_data.h"
+#include "game_data.h"
 
+Data data;
 void drawMenu(int selectedIndex)
 {
     int fontSize = 16;
@@ -28,61 +29,70 @@ void drawMenu(int selectedIndex)
     DrawText("Quit", quitBtnPos.x, quitBtnPos.y, 16, WHITE);
 }
 
+Color getColorFromJSON(nlohmann::json& colorArr)
+{
+    return Color { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
+}
+
+void parseJSONData()
+{
+    std::ifstream file("game_data.json");
+    nlohmann::json j;
+    file >> j;
+    int index = 0;
+    for (auto& obj : j["bricks"])
+    {
+        data.brickData[index].color1 = getColorFromJSON(obj["color1"]);
+        data.brickData[index].color2 = getColorFromJSON(obj["color2"]);
+        data.brickData[index].outline = getColorFromJSON(obj["outline"]);
+        data.brickData[index].score = obj["score"].get<int>();
+        data.brickData[index].health = obj["health"].get<int>();
+        index++;
+    }
+    data.ballData.color1 = getColorFromJSON(j["ball"]["color1"]);
+    data.ballData.color2 = getColorFromJSON(j["ball"]["color2"]);
+    data.ballData.outline = getColorFromJSON(j["ball"]["outline"]);
+
+    data.playerData.color1 = getColorFromJSON(j["player"]["color1"]);
+    data.playerData.color2 = getColorFromJSON(j["player"]["color2"]);
+    data.playerData.outline = getColorFromJSON(j["player"]["outline"]);
+}
+
+void drawMenu(RenderTexture2D target, int selectedIndex)
+{
+    BeginTextureMode(target);
+    ClearBackground(BLACK);
+
+    drawMenu(selectedIndex);
+
+    EndTextureMode();
+
+    BeginDrawing();
+    DrawTexturePro(target.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
+    EndDrawing();
+}
+
+
 int main()
 {
-
+    enum class State { Menu, InGame, Editor };
     InitWindow(screen_width, screen_height, "Arkanoid - David Bang");
     InitAudioDevice();
     SetTargetFPS(60);
 
     RenderTexture2D target = LoadRenderTexture(game_width, game_height);
-    enum class State { Menu, InGame, Editor };
-
     State state = State::Menu;
-    Data data;
 
+    parseJSONData();
 
-    std::ifstream file("game_data.json");
-    nlohmann::json j;
-    file >> j;
-    Game game{target, data};
-
-    int index = 0;
-    for (auto& obj : j["bricks"])
-    {
-        auto colorArr = obj["color1"];
-        std::cout << (int)colorArr[0].get<unsigned char>() << std::endl;
-        data.brickData[index].color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>()};
-        colorArr = obj["color2"];
-        data.brickData[index].color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
-        data.brickData[index].score = obj["score"].get<int>();
-        data.brickData[index].health = obj["health"].get<int>();
-        index++;
-    }
-    auto colorArr = j["ball"]["color1"];
-    data.ballData.color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
-    colorArr = j["ball"]["color2"];
-    data.ballData.color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
-    
-    colorArr = j["player"]["color1"];
-    data.playerData.color1 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
-    colorArr = j["player"]["color2"];
-    data.playerData.color2 = { colorArr[0].get<unsigned char>(), colorArr[1].get<unsigned char>(), colorArr[2].get<unsigned char>(), colorArr[3].get<unsigned char>() };
-
-
+    Game game{ target, data };
     LevelEditor editor{target, data};
-    //game.init(target);
 
-    int choice = 1;
-
-    int selectedIndex = 0;
-
-
+    int choice = 1, selectedIndex = 0;
     bool running = true;
-    //LevelEditor editor;
+
     while (running)
     {
-        
         switch (state)
         {
         case State::Menu:
@@ -103,7 +113,6 @@ int main()
             {
                 if (selectedIndex == 0)
                 {
-                    
                     state = State::InGame;
                 }
                 else if (selectedIndex == 1)
@@ -115,23 +124,11 @@ int main()
                     running = false;
                 }
             }
-
-            BeginTextureMode(target);
-            ClearBackground(BLACK);
-
-            drawMenu(selectedIndex);
-
-            EndTextureMode();
-
-            BeginDrawing();
-            DrawTexturePro(target.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
-            EndDrawing();
+            drawMenu(target, selectedIndex);
             break;
         }
-
         case State::InGame:
             game.run();
-
             state = State::Menu;
             break;
         case State::Editor:
@@ -141,16 +138,6 @@ int main()
         default:
             break;
         }
-
-
-        //if (choice == 1)
-        //{
-        //    game.run();
-        //}
-        //else if (choice == 2)
-        //{
-        //    //editor.run();
-        //}
     }
 
     UnloadRenderTexture(target);

@@ -24,13 +24,13 @@ void LevelEditor::writeLevelToFile()
             //std::cout << bricks[i].pos.x << ", " << bricks[i].pos.y << std::endl;
             switch (bricks[i].type)
             {
-                case Data::BrickType::One:  line += 'g'; break;
-                case Data::BrickType::Two: line += 'p'; break;
-                case Data::BrickType::Three:   line += 'b'; break;
-                case Data::BrickType::Four: line += 'y'; break;
-                case Data::BrickType::Five:    line += 'r'; break;
-                case Data::BrickType::Six:   line += 'G'; break;
-                case Data::BrickType::None:   line += 'n'; break;
+                case Data::BrickType::None:   line += '0'; break;
+                case Data::BrickType::One:  line += '1'; break;
+                case Data::BrickType::Two: line += '2'; break;
+                case Data::BrickType::Three:   line += '3'; break;
+                case Data::BrickType::Four: line += '4'; break;
+                case Data::BrickType::Five:    line += '5'; break;
+                case Data::BrickType::Six:   line += '6'; break;
                 default:
                     break;
             }
@@ -55,15 +55,11 @@ void LevelEditor::openLevel(std::string& path)
         {
             for (int i = 0; i < line.length(); i++)
             {
-                switch (line[i])
+                int brickTypeIndex = line[i] - '0';
+                if (brickTypeIndex < (int)Data::BrickType::Count)
                 {
-                    case 'G': bricks[index].changeTypeAndColor(Data::BrickType::Six, data->brickData[5].color1);   break;
-                    case 'y': bricks[index].changeTypeAndColor(Data::BrickType::Four, data->brickData[3].color1); break;
-                    case 'r': bricks[index].changeTypeAndColor(Data::BrickType::Five, data->brickData[4].color1);    break;
-                    case 'p': bricks[index].changeTypeAndColor(Data::BrickType::Two, data->brickData[1].color1); break;
-                    case 'b': bricks[index].changeTypeAndColor(Data::BrickType::Three, data->brickData[2].color1);   break;
-                    case 'g': bricks[index].changeTypeAndColor(Data::BrickType::One, data->brickData[0].color1);  break;
-                    case 'n': bricks[index].changeTypeAndColor(Data::BrickType::None, data->brickData[6].color1);   break;
+                    Data::BrickData brData = data->brickData[brickTypeIndex];
+                    bricks[index].changeTypeAndColor((Data::BrickType)brickTypeIndex, brData.color1, brData.color2, brData.outline);
                 }
                 index++;
                 if (index > num_max_bricks)
@@ -75,14 +71,16 @@ void LevelEditor::openLevel(std::string& path)
 void LevelEditor::listLevels()
 {
     levels.clear();
-    std::string path = std::filesystem::current_path().string();
+    std::string path = std::filesystem::current_path().string() + ".\\levels\\";
     for (const auto& file : std::filesystem::directory_iterator(path))
     {
         std::filesystem::path name = file.path().filename();
+        std::string name_no_extension = "";
         if (name.extension() == ".txt")
         {
-            std::cout << "[" << levels.size() << "] - " << name << std::endl;
-            levels.push_back(name.string());
+            name_no_extension = name.string().substr(0, name.string().find_last_of('.'));
+            std::cout << "[" << levels.size() << "] - " << name_no_extension << std::endl;
+            levels.push_back(".\\levels\\" + name.string());
         }
     }
 }
@@ -101,11 +99,12 @@ void LevelEditor::run()
         RenderComponent* renderer = &renderers[i];
         brick.renderer = renderer;
         brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
-        brick.type = (Data::BrickType)0;
-        brick.color = WHITE;
+        brick.changeTypeAndColor((Data::BrickType)1, data->brickData[1].color1, data->brickData[1].color2, data->brickData[1].outline);
         renderer->pos = &brick.pos;
         renderer->size = brick.size;
-        renderer->color1 = &brick.color;
+        renderer->color1 = &brick.color1;
+        renderer->color2 = &brick.color2;
+        renderer->outline = &brick.outline;
         renderer->isVisible = true;
     }
     //create preview brick
@@ -113,11 +112,12 @@ void LevelEditor::run()
     RenderComponent* renderer = &renderers[num_max_bricks];
     brick.renderer = renderer;
     brick.pos = Vector2{ game_width/2 - 20, game_height-85-brick_height/2 };
-    brick.type = (Data::BrickType)0;
-    brick.color = GREEN;
+    brick.changeTypeAndColor((Data::BrickType)1, data->brickData[1].color1, data->brickData[1].color2, data->brickData[1].outline);
     renderer->pos = &brick.pos;
     renderer->size = brick.size;
-    renderer->color1 = &brick.color;
+    renderer->color1 = &brick.color1;
+    renderer->color2 = &brick.color2;
+    renderer->outline = &brick.outline;
     renderer->isVisible = true;
 
     double time = 0;
@@ -140,16 +140,16 @@ void LevelEditor::run()
         {
             type_index++;
             type_index %= (int)Data::BrickType::Count;
-            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1);
+            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
         }
         else if (mouseWheel < 0)
         {
             type_index--;
             if (type_index < 0)
             {
-                type_index = (int)Data::BrickType::None;
+                type_index = (int)Data::BrickType::Count - 1;
             }
-            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1);
+            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
         }
         
         
@@ -176,7 +176,7 @@ void LevelEditor::run()
                         validIndex = false;
                         std::cin >> input;
                         index = std::stoi(input);
-                    } while (index < 0 || index > levels.size());
+                    } while (index < 0 || index >= levels.size());
                     currentPath = levels[index];
                     openLevel(currentPath);
                 }
@@ -192,8 +192,20 @@ void LevelEditor::run()
                 }
             }
         }
+        
+        bool ctrlMod = IsKeyDown(KEY_LEFT_CONTROL);
         if (IsKeyPressed(KEY_S))
         {
+            if (ctrlMod)
+            {
+                
+                system("cls");
+                std::cout << "Existing levels:" << std::endl;
+                listLevels();
+                std::cout << "Save level as: ";
+                std::cin >> currentPath;
+                currentPath = ".\\levels\\" + currentPath + ".txt";
+            }
             writeLevelToFile();
         }
 
@@ -207,7 +219,7 @@ void LevelEditor::run()
                 Rectangle rec = { pos.x - size.x / 2, pos.y - size.y / 2, pos.x + size.x / 2, pos.y + size.y/2 };
                 if (CheckCollisionPointRec(mousePos, rec))
                 {
-                    bricks[i].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1);
+                    bricks[i].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
                     break;
                 }
             }

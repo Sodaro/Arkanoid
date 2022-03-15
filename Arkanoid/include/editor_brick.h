@@ -3,7 +3,8 @@
 #include "config.h"
 #include "raylib.h"
 #include "RenderComponent.h"
-#include "entity_data.h"
+#include "game_data.h"
+
 struct EditorBrick
 {
     RenderComponent* renderer;
@@ -11,6 +12,6 @@ struct EditorBrick
     int typeIndex = 0;
     Vector2 size = { brick_width, brick_height };
     Vector2 pos = { 0,0 };
-    Color color;
-    void changeTypeAndColor(Data::BrickType type, Color c1);
+    Color color1, color2, outline;
+    void changeTypeAndColor(Data::BrickType type, Color c1, Color c2, Color o);
 };

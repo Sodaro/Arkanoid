@@ -101,7 +101,7 @@
     <ClInclude Include="include\editor_brick.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="include\entity_data.h">
+    <ClInclude Include="include\game_data.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\json.hpp">

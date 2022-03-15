@@ -5,7 +5,8 @@
 #include "collision.h"
 #include "common.h"
 #include "config.h"
-#include "entity_data.h"
+#include "game_data.h"
+
 
 class Brick : public Entity
 {
@@ -13,7 +14,7 @@ public:
 	//Brick* bricks;
 	int score = 0;
 	int brickIndex = 0;
-	int health = 1;
+	int maxHealth = 1, currentHealth = 1;
 	Data::BrickType type;
 	actionInt onDestroyCallback;
 	Brick()
@@ -23,8 +24,9 @@ public:
 		onDestroyCallback = nullptr;
 		size = { brick_width, brick_height };
 	}
-	void initializeTypeData(Data::BrickType type, Color c1, Color c2, int score);
+	void initializeTypeData(Data::BrickType type, Color c1, Color c2, Color o, int score, int maxHealth);
 	void onCollision(CollisionParams& params) override;
 	void reduceHealth(int amount);
+	void resetHealth();
 	
 };
