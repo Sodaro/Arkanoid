@@ -1,5 +1,6 @@
 #pragma once
-#include <iostream>
+#include <vector>
+#include <string>
 #include "raylib.h"
 #include "player.h"
 #include "brick.h"
@@ -8,12 +9,15 @@
 #include "input.h"
 #include "raymath.h"
 #include "config.h"
-#include <string>
 #include "game_data.h"
-#include <vector>
+#include "render_component.h"
+#include "physics_component.h"
+#include "collision_component.h"
 
 class Game
 {
+    int openSelectedIndex = 0;
+
     std::vector<std::string> levels;
     Data* data;
     RenderTexture2D targetTexture;
@@ -23,12 +27,12 @@ class Game
     CollisionComponent colliders[num_max_entities] = {};
     PhysicsComponent physicsComponents[num_max_balls + 1] = {};
     Player player{ num_max_balls };
-    
+    std::string fileName;
 
     bool isRunning = true;
     bool gameOver = false;
     bool isGameWon = false;
-
+    bool levelsFetched = false;
 
     int lives = 3;
     int numCreatedBricks = 0;
@@ -42,60 +46,6 @@ class Game
     uint8_t bricksSinceLastBall = 0;
 
     Sound destroyWav;
-    void fillWithLeadingZeroes(std::string& str, int maxDigits)
-    {
-        int amount = maxDigits - str.length() - 1;
-        for (int i = 0; i < amount; i++)
-            str = "0" + str;
-    }
-    float easeInQuart(float x) {
-        return x * x * x * x;
-    }
-    float easeOutQuart(float x) {
-        return 1 - pow(1 - x, 4);
-    }
-
-    Color lerpColor(Color& c1, Color& c2, float t)
-    {
-        unsigned char r = c1.r + t * (c2.r - c1.r);
-        unsigned char g = c1.g + t * (c2.g - c1.g);
-        unsigned char b = c1.b + t * (c2.b - c1.b);
-
-        Color n;
-        n.r = r;
-        n.g = g;
-        n.b = b;
-
-        return n;
-    }
-    Color easeInColor(Color& c1, Color& c2, float t)
-    {
-        t = easeInQuart(t);
-        unsigned char r = c1.r + t * (c2.r - c1.r);
-        unsigned char g = c1.g + t * (c2.g - c1.g);
-        unsigned char b = c1.b + t * (c2.b - c1.b);
-
-        Color n;
-        n.r = r;
-        n.g = g;
-        n.b = b;
-
-        return n;
-    }
-    Color easeOutColor(Color& c1, Color& c2, float t)
-    {
-        t = easeOutQuart(t);
-        unsigned char r = c1.r + t * (c2.r - c1.r);
-        unsigned char g = c1.g + t * (c2.g - c1.g);
-        unsigned char b = c1.b + t * (c2.b - c1.b);
-
-        Color n;
-        n.r = r;
-        n.g = g;
-        n.b = b;
-
-        return n;
-    }
 
 
     void drawUIText();
@@ -107,14 +57,15 @@ class Game
     void onBallLeftScreen(int index);
 
     void onBallShot();
-
+    
     bool setup();
-
+    
     void reset();
 
-    void listLevels();
-
     public:
+        enum class State { LevelSelect, Gameplay };
+        State state;
         Game(RenderTexture2D& target, Data& data);
+        bool levelSelectUpdate();
         void run();
 };

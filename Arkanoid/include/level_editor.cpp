@@ -2,20 +2,20 @@
 #include <fstream>
 #include <string>
 #include <iostream>
-#include <filesystem>
-
+#include "input.h"
+#include "ui_helper.h"
+#include "utilities.h"
+#include "render_component.h"
 LevelEditor::LevelEditor(RenderTexture2D& targetTexture, Data& data)
 {
+    state = State::Edit;
     this->targetTexture = targetTexture;
     this->data = &data;
 }
 
 void LevelEditor::writeLevelToFile()
 {
-    if (currentPath == "")
-        currentPath = "defaultlevel.txt";
-
-    std::ofstream file(currentPath);
+    std::ofstream file(Utilities::levels_path + fileName + ".txt");
     std::string line;
     if (file.is_open())
     {
@@ -44,9 +44,9 @@ void LevelEditor::writeLevelToFile()
     }
 }
 
-void LevelEditor::openLevel(std::string& path)
+void LevelEditor::openLevel(std::string& name)
 {
-    std::ifstream file(path);
+    std::ifstream file(Utilities::levels_path + name);
     std::string line;
     int index = 0;
     if (file.is_open())
@@ -68,29 +68,163 @@ void LevelEditor::openLevel(std::string& path)
         }
     }
 }
-void LevelEditor::listLevels()
+
+void LevelEditor::openUpdate()
 {
-    levels.clear();
-    std::string path = std::filesystem::current_path().string() + ".\\levels\\";
-    for (const auto& file : std::filesystem::directory_iterator(path))
+    /*
+    * 1. create scroll wheel of levels
+    * 2. let user choose by navigating with arrows and hitting enter/space
+    * 3. open selected level
+    */
+
+    int prevIndex = -1, nextIndex = -1;
+
+    int levelCount = (int)levels.size();
+    if (levelCount == 0)
     {
-        std::filesystem::path name = file.path().filename();
-        std::string name_no_extension = "";
-        if (name.extension() == ".txt")
+        state = State::Edit;
+        return;
+    }
+
+    int verticalInput = Input::getVerticalInput();
+    if (verticalInput != 0)
+    {
+        openSelectedIndex += verticalInput;
+        if (openSelectedIndex >= levelCount)
+            openSelectedIndex = 0;
+        else if (openSelectedIndex < 0)
+            openSelectedIndex = levelCount - 1;
+    }
+
+    if (levelCount >= 2)
+    {
+        nextIndex = (openSelectedIndex + 1) % levelCount;
+    }
+    if (levelCount >= 3)
+    {
+        prevIndex = openSelectedIndex - 1;
+        if (prevIndex < 0)
+            prevIndex = levelCount - 1;
+    }
+    int fontSize = 8;
+    int offsetPerChar = 8;
+    Vector2 playBtnPos = { game_width / 2, game_height / 2 - 50 };
+    Vector2 editorBtnPos = { game_width / 2, game_height / 2 };
+    Vector2 quitBtnPos = { game_width / 2, game_height / 2 + 50 };
+
+    if (prevIndex != -1)
+    {
+        UI::drawCenteredTextWithBox(levels[prevIndex], fontSize, playBtnPos, GRAY, GRAY);
+    }
+
+    UI::drawCenteredTextWithBox(levels[openSelectedIndex], fontSize, editorBtnPos, WHITE, WHITE);
+    if (nextIndex != -1)
+    {
+        UI::drawCenteredTextWithBox(levels[nextIndex], fontSize, quitBtnPos, GRAY, GRAY);
+    }
+    DrawText("Enter/Space: play", 0, game_height - 20, 12, WHITE);
+    DrawText("UP/DOWN: navigate", 0, game_height - 40, 12, WHITE);
+
+    if (Input::actionPressed())
+    {
+        openLevel(levels[openSelectedIndex]);
+        state = State::Edit;
+    }
+}
+
+void LevelEditor::writeUpdate()
+{
+    /*
+    * 1. show & update field where user can write level name
+    * 2. write level to file
+    */
+    UI::drawTextCentered(fileName, 8, Vector2{ game_width / 2, game_height / 2 }, WHITE);
+    int key = GetCharPressed();
+    int letterCount = (int)fileName.length();
+    int maxLength = 10;
+    if (std::isalnum(key) && letterCount < maxLength)
+    {
+        fileName += (char)key;
+    }
+    if (IsKeyDown(KEY_BACKSPACE) && letterCount > 0)
+    {
+        fileName.erase(fileName.end() - 1);
+    }
+    if (Input::actionPressed())
+    {
+        writeLevelToFile();
+        state = State::Edit;
+    }
+}
+
+void LevelEditor::editUpdate()
+{
+    float mouseWheel = GetMouseWheelMove();
+    Data::BrickData brData;
+    if (mouseWheel != 0)
+    {
+        int dir = mouseWheel > 0 ? 1 : -1;
+        blockBrushIndex += dir;
+        if (blockBrushIndex < 0)
+            blockBrushIndex = (int)Data::BrickType::Count - 1;
+        else if (blockBrushIndex >= (int)Data::BrickType::Count)
+            blockBrushIndex = 0;
+
+        brData = data->brickData[blockBrushIndex];
+        bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)blockBrushIndex, brData.color1, brData.color2, brData.outline);
+        
+    }
+
+    if (IsKeyPressed(KEY_O))
+    {
+        std::size_t pos{};
+        std::string input;
+        int index = 0;
+        levels = Utilities::fetchLevels();
+        state = State::Open;
+    }
+
+    if (IsKeyPressed(KEY_S))
+    {
+        state = State::Write;
+    }
+
+    if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
+    {
+        Vector2 mousePos = GetMousePosition() / 2;
+        for (int i = 0; i < num_max_bricks; i++)
         {
-            name_no_extension = name.string().substr(0, name.string().find_last_of('.'));
-            std::cout << "[" << levels.size() << "] - " << name_no_extension << std::endl;
-            levels.push_back(".\\levels\\" + name.string());
+            Vector2 pos = bricks[i].pos;
+            Vector2 size = bricks[i].size;
+            Rectangle rec = { pos.x - size.x / 2, pos.y - size.y / 2, size.x, size.y };
+            if (CheckCollisionPointRec(mousePos, rec))
+            {
+                brData = data->brickData[blockBrushIndex];
+                bricks[i].changeTypeAndColor((Data::BrickType)blockBrushIndex, brData.color1, brData.color2, brData.outline);
+                break;
+            }
         }
     }
+
+    for (int i = 0; i < num_max_bricks + 1; i++)
+    {
+        renderers[i].update(RenderComponent::Mode::FILL_LINES);
+    }
+    DrawText("Current type: ", 0, game_height - 100, 8, WHITE);
+    DrawText("MWHEEL: change type.", 0, game_height - 80, 8, WHITE);
+    DrawText("LMB: change brick to type.", 0, game_height - 60, 8, WHITE);
+    DrawText("O: open level.", 0, game_height - 40, 8, WHITE);
+    DrawText("S: save level.", 0, game_height - 20, 8, WHITE);
+
 }
 
 void LevelEditor::run()
 {
-    //openFileDialog();
-    int brickOffsetX = bricks[0].size.x / 2;
-    int brickOffsetY = bricks[0].size.y / 2;
+    int brickOffsetX = (int)bricks[0].size.x / 2;
+    int brickOffsetY = (int)bricks[0].size.y / 2;
 
+    int width = 40;
+    int height = 20;
     for (int i = 0; i < num_max_bricks; i++)
     {
         int x = i % bricksPerRow;
@@ -120,127 +254,36 @@ void LevelEditor::run()
     renderer->outline = &brick.outline;
     renderer->isVisible = true;
 
-    double time = 0;
-    double prev_time = 0;
-    double delta_time;
-
-    int type_index = 0;
+    state = State::Edit;
 
     while (!WindowShouldClose())
     {
-        time = GetTime();
-        delta_time = (time - prev_time);
-        prev_time = time;
-        //click_timer += delta_time;
         BeginTextureMode(targetTexture);
 
         ClearBackground(BLACK);
-        float mouseWheel = GetMouseWheelMove();
-        if (mouseWheel > 0)
-        {
-            type_index++;
-            type_index %= (int)Data::BrickType::Count;
-            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
-        }
-        else if (mouseWheel < 0)
-        {
-            type_index--;
-            if (type_index < 0)
-            {
-                type_index = (int)Data::BrickType::Count - 1;
-            }
-            bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
-        }
-        
-        
-        if (IsKeyPressed(KEY_O))
-        {
-            std::size_t pos{};
-            std::string input;
-            int index = 0;
-            system("cls");
-            listLevels();
-            if (levels.size() == 0)
-                std::cout << "No levels found" << std::endl;
-            else
-            {
-                std::cout << "Select file to open (index number): " << std::endl;
-                try
-                {
-                    bool validIndex = true;
-                    do
-                    {
-                        if (!validIndex)
-                            std::cout << "No level with given index" << std::endl;
 
-                        validIndex = false;
-                        std::cin >> input;
-                        index = std::stoi(input);
-                    } while (index < 0 || index >= levels.size());
-                    currentPath = levels[index];
-                    openLevel(currentPath);
-                }
-                catch (std::invalid_argument const& ex)
-                {
-                    std::cout << "std::invalid_argument::what(): " << ex.what() << '\n';
-                }
-                catch (std::out_of_range const& ex)
-                {
-                    std::cout << "std::out_of_range::what(): " << ex.what() << '\n';
-                    const long long ll{ std::stoll(input, &pos) };
-                    std::cout << "std::stoll('" << input << "'): " << ll << "; pos: " << pos << '\n';
-                }
-            }
-        }
-        
-        bool ctrlMod = IsKeyDown(KEY_LEFT_CONTROL);
-        if (IsKeyPressed(KEY_S))
+        switch (state)
         {
-            if (ctrlMod)
-            {
-                
-                system("cls");
-                std::cout << "Existing levels:" << std::endl;
-                listLevels();
-                std::cout << "Save level as: ";
-                std::cin >> currentPath;
-                currentPath = ".\\levels\\" + currentPath + ".txt";
-            }
-            writeLevelToFile();
+        case LevelEditor::State::Edit:
+            editUpdate();
+            Vector2 mousePos = GetMousePosition() / 2;
+            UI::drawCursor(mousePos, MAGENTA);
+            break;
+        case LevelEditor::State::Open:
+            openUpdate();
+            break;
+        case LevelEditor::State::Write:
+            writeUpdate();
+            break;
+        default:
+            break;
         }
-
-        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT))
-        {
-            Vector2 mousePos = GetMousePosition();
-            for (int i = 0; i < num_max_bricks; i++)
-            {
-                Vector2 pos = bricks[i].pos;
-                Vector2 size = bricks[i].size;
-                Rectangle rec = { pos.x - size.x / 2, pos.y - size.y / 2, pos.x + size.x / 2, pos.y + size.y/2 };
-                if (CheckCollisionPointRec(mousePos, rec))
-                {
-                    bricks[i].changeTypeAndColor((Data::BrickType)type_index, data->brickData[type_index].color1, data->brickData[type_index].color2, data->brickData[type_index].outline);
-                    break;
-                }
-            }
-        }
-
-        for (int i = 0; i < num_max_bricks+1; i++)
-        {
-            renderers[i].update(RenderComponent::Mode::FILL_LINES);
-        }
-
-        DrawText("Current type: ", 0, game_height - 100, 8, WHITE);
-        DrawText("MWHEEL: change type." , 0, game_height - 80, 8, WHITE);
-        DrawText("LMB: change brick to type.", 0, game_height - 60, 8, WHITE);
-        DrawText("O: open level (console).", 0, game_height - 40, 8, WHITE);
-        DrawText("S: save level.", 0, game_height - 20, 8, WHITE);
-
 
         EndTextureMode();
 
         BeginDrawing();
         DrawTexturePro(targetTexture.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
+
         EndDrawing();
     }
 }

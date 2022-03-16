@@ -1,11 +1,13 @@
 #include "input.h"
+#include "raylib.h"
 
 bool Input::modeSwitchPressed()
 {
 	return IsKeyPressed(KEY_F1);
 }
 
-bool Input::actionPressed() { return (IsKeyDown(KEY_SPACE) || IsKeyDown(KEY_ENTER)); };
+bool Input::actionPressed() { return (IsKeyPressed(KEY_SPACE) || IsKeyPressed(KEY_ENTER)); };
+bool Input::actionReleased() { return (IsKeyReleased(KEY_SPACE) || IsKeyReleased(KEY_ENTER)); };
 int Input::getVerticalInput()
 {
 	int vertical = 0;

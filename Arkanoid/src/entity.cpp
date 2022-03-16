@@ -1,7 +1,7 @@
 
-#include "RenderComponent.h"
-#include "PhysicsComponent.h"
-#include "CollisionComponent.h"
+#include "render_component.h"
+#include "physics_component.h"
+#include "collision_component.h"
 #include "entity.h"
 void Entity::setupRenderer()
 {

@@ -6,16 +6,6 @@ typedef int* int_ptr;
 
 class Entity;
 class Game;
-//class Ball;
-//class Brick;
-//class Player;
-//typedef void (*action);
-//typedef void (*actionInt)(int amount);
-
-//typedef void (Brick::*brickAction)();
-//typedef void (Brick::*brickActionInt)(int);
-//
-//typedef void (Player::*playerAction)();
 
 typedef void (Game::*action)();
 typedef void (Game::*actionInt)(int);
@@ -28,9 +18,5 @@ struct CollisionParams
 	Vector2 normal = Vector2{ 0,0 };
 };
 
-
-
-constexpr Color player_color = { 22,140,140,255 };
-constexpr Color ball_color = { 21,40,82,255 };
 constexpr Color bg_one = { 213,86,1,255 };
 constexpr Color bg_two = { 25,5,7,255 };

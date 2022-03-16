@@ -1,25 +1,29 @@
 #pragma once
-#include "config.h"
-#include "editor_brick.h"
-#include <raylib.h>
 #include <string>
 #include <vector>
-#include "game_data.h"
+#include "config.h"
+#include "editor_brick.h"
+#include "render_component.h"
 
 class LevelEditor
 {
-    //float time_between_clicks = 0.5f;
-    //float click_timer = 0;
+    enum class State { Edit, Open, Write };
+    State state;
     Data* data;
     std::vector<std::string> levels;
-    std::string currentPath;
     EditorBrick bricks[num_max_bricks+1];
     RenderComponent renderers[num_max_bricks+1];
     RenderTexture2D targetTexture;
+
+    int openSelectedIndex = 0;
+    int blockBrushIndex = 0;
+    std::string fileName = "mylvlname";
+
     void writeLevelToFile();
     void openLevel(std::string& path);
-    void listLevels();
-    
+    void editUpdate();
+    void openUpdate();
+    void writeUpdate();
 public:
     LevelEditor(RenderTexture2D& targetTexture, Data& data);
     void run();

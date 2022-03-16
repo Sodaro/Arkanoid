@@ -1,9 +1,10 @@
 #pragma once
 #include "entity.h"
-#include "RenderComponent.h"
-#include "PhysicsComponent.h"
-#include "CollisionComponent.h"
 #include "config.h"
+
+struct PhysicsComponent;
+struct RenderComponent;
+struct CollisionComponent;
 
 class Ball : public Entity
 {
@@ -31,15 +32,5 @@ public:
 	void handleOutsideScreen();
 	void onCollision(CollisionParams& params) override;
 
-	void setActive()
-	{
-		renderer->isVisible = true;
-		Vector2 newVelocity;
-		newVelocity.x = initialSpeed;
-		newVelocity.y = -initialSpeed;
-		physics->velocity = newVelocity;
-		physics->isActive = true;
-		collider->enabled = true;
-		physics->collider = collider;
-	}
+	void setActive();
 };

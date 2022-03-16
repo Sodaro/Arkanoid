@@ -208,47 +208,32 @@ typedef struct Vector2 {
 
     Vector2 operator * (Vector2 r)
     {
-        Vector2 newVec;
-        newVec.x = this->x * r.x;
-        newVec.y = this->y * r.y;
-        return newVec;
+        return Vector2{ this->x * r.x, this->y * r.y };
     }
 
+    
     Vector2 operator / (Vector2 r)
     {
-        Vector2 newVec;
-        newVec.x = this->x / r.x;
-        newVec.y = this->y / r.y;
-        return newVec;
+        return Vector2{ this->x / r.x, this->y / r.y };
     }
-    Vector2 operator / (int r)
+    template<typename T>
+    Vector2 operator / (T r)
     {
-        Vector2 newVec;
-        newVec.x = this->x / r;
-        newVec.y = this->y / r;
-        return newVec;
+        return Vector2{ this->x / r, this->y / r };
     }
-    Vector2 operator * (int r)
+    template<typename T>
+    Vector2 operator * (T r)
     {
-        Vector2 newVec;
-        newVec.x = this->x * r;
-        newVec.y = this->y * r;
-        return newVec;
+        return Vector2{ this->x * r, this->y * r };;
     }
 
     Vector2 operator + (Vector2 r)
     {
-        Vector2 newVec;
-        newVec.x = this->x + r.x;
-        newVec.y = this->y + r.y;
-        return newVec;
+        return Vector2{ this->x + r.x, this->y + r.y };
     }
     Vector2 operator - (Vector2 r)
     {
-        Vector2 newVec;
-        newVec.x = this->x - r.x;
-        newVec.y = this->y - r.y;
-        return newVec;
+        return Vector2{ this->x - r.x, this->y - r.y };
     }
 
 

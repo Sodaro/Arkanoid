@@ -5,28 +5,28 @@
 #include <fstream>
 #include <json.hpp>
 #include "game_data.h"
+#include "ui_helper.h"
 
 Data data;
 void drawMenu(int selectedIndex)
 {
     int fontSize = 16;
-    const char* title = "Arkanoid!";
-    const char* description = "Made by David Bang";
-    DrawText(title, game_width/2 - 2 * fontSize, 0, 16, WHITE);
-    DrawText(description, game_width/2 - 4 * 12, 20, 8, WHITE);
-    Vector2 playBtnPos = { game_width / 2 - fontSize, game_height / 2 };
-    Vector2 editorBtnPos = { game_width / 2 - fontSize, game_height / 2 + 50 };
-    Vector2 quitBtnPos = { game_width / 2 - fontSize, game_height / 2 + 100 };
+    std::string play = "Play";
+    std::string editor = "Editor";
+    std::string quit = "Quit";
+    Color c1 = GRAY, c2 = GRAY, c3 = GRAY;
+    DrawText("Arkanoid!", game_width/2 - 2 * fontSize, 0, fontSize, WHITE);
+    DrawText("Made by David Bang", game_width/2 - 4 * 12, 20, 8, WHITE);
     if (selectedIndex == 0)
-        DrawRectangleLines(playBtnPos.x - 20, playBtnPos.y - 5, 75, 25, WHITE);
+        c1 = WHITE;
     else if (selectedIndex == 1)
-        DrawRectangleLines(editorBtnPos.x - 20, editorBtnPos.y - 5, 75, 25, WHITE);
+        c2 = WHITE;
     else
-        DrawRectangleLines(quitBtnPos.x - 20, quitBtnPos.y - 5, 75, 25, WHITE);
+        c3 = WHITE;
 
-    DrawText("Play", playBtnPos.x, playBtnPos.y, 16, WHITE);
-    DrawText("Editor", editorBtnPos.x, editorBtnPos.y, 16, WHITE);
-    DrawText("Quit", quitBtnPos.x, quitBtnPos.y, 16, WHITE);
+    UI::drawCenteredTextWithBox(play, fontSize, Vector2{ game_width / 2, game_height / 2 }, c1, c1);
+    UI::drawCenteredTextWithBox(editor, fontSize, Vector2{ game_width / 2, game_height / 2 + 50 }, c2, c2);
+    UI::drawCenteredTextWithBox(quit, fontSize, Vector2{ game_width / 2, game_height / 2 + 100 }, c3, c3);
 }
 
 Color getColorFromJSON(nlohmann::json& colorArr)
@@ -64,12 +64,9 @@ void drawMenu(RenderTexture2D target, int selectedIndex)
     ClearBackground(BLACK);
 
     drawMenu(selectedIndex);
-
+    //Vector2 mousePos = GetMousePosition();
+    //UI::drawCursor(mousePos, MAGENTA);
     EndTextureMode();
-
-    BeginDrawing();
-    DrawTexturePro(target.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
-    EndDrawing();
 }
 
 
@@ -79,6 +76,7 @@ int main()
     InitWindow(screen_width, screen_height, "Arkanoid - David Bang");
     InitAudioDevice();
     SetTargetFPS(60);
+    HideCursor();
 
     RenderTexture2D target = LoadRenderTexture(game_width, game_height);
     State state = State::Menu;
@@ -93,6 +91,7 @@ int main()
 
     while (running)
     {
+        
         switch (state)
         {
         case State::Menu:
@@ -109,7 +108,7 @@ int main()
                 ++selectedIndex %= 3;
             }
 
-            if (Input::actionPressed())
+            if (Input::actionReleased())
             {
                 if (selectedIndex == 0)
                 {
@@ -125,11 +124,19 @@ int main()
                 }
             }
             drawMenu(target, selectedIndex);
+            BeginDrawing();
+            DrawTexturePro(target.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
+            EndDrawing();
             break;
         }
         case State::InGame:
-            game.run();
-            state = State::Menu;
+            if (game.levelSelectUpdate() == false)
+            {
+                if (game.state == Game::State::Gameplay)
+                    game.run();
+
+                state = State::Menu;
+            }
             break;
         case State::Editor:
             editor.run();

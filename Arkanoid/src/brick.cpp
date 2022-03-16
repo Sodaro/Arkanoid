@@ -1,8 +1,15 @@
 #include "brick.h"
 #include "config.h"
-//void Brick::render()
-//{
-//}
+#include "collision_component.h"
+#include "render_component.h"
+
+Brick::Brick()
+{
+	score = 0, brickIndex = 0, maxHealth = 1, currentHealth = 1;
+	type = Data::BrickType::Six;
+	onDestroyCallback = nullptr;
+	size = { brick_width, brick_height };
+}
 
 void Brick::initializeTypeData(Data::BrickType type, Color c1, Color c2, Color o, int score, int maxHealth)
 {

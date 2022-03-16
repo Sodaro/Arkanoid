@@ -2,8 +2,10 @@
 #include "collision.h"
 #include <iostream>
 #include "player.h"
-#include "config.h"
 #include "raymath.h"
+#include "physics_component.h"
+#include "render_component.h"
+#include "collision_component.h"
 
 void Ball::handleOutsideScreen()
 {
@@ -21,13 +23,12 @@ void Ball::onCollision(CollisionParams& params)
 	float speed = sqrtf(physics->velocity.x * physics->velocity.x + physics->velocity.y * physics->velocity.y);
 	if (dynamic_cast<Player*>(params.colliderObject) != nullptr)
 	{
-		//ty ruta for helping make the paddle feel better to use!
 		Vector2 ballToPlayer = params.colliderObject->pos - pos + Vector2{0, size.y};
 		float len = sqrtf(ballToPlayer.x * ballToPlayer.x + ballToPlayer.y * ballToPlayer.y);
 		Vector2 dir = ballToPlayer / len;
-		if (dir.y > 0.75)
+		if (dir.y > 0.75f)
 		{
-			dir.y = 0.75;
+			dir.y = 0.75f;
 			dir.x = velocity.x > 0 ? -0.35f : 0.35f;
 		}
 		if (speed < maxSpeed)
@@ -36,8 +37,6 @@ void Ball::onCollision(CollisionParams& params)
 			if (speed > maxSpeed)
 				speed = maxSpeed;
 		}
-
-		//printf("%f, %f\n", dir.x, dir.y);
 		physics->velocity = (dir*-1) * speed;
 		return;
 	}
@@ -61,4 +60,14 @@ void Ball::onCollision(CollisionParams& params)
 	{
 		physics->velocity.y *= -1;
 	}
+}
+
+void Ball::setActive()
+{
+	renderer->isVisible = true;
+	Vector2 newVelocity = { initialSpeed, -initialSpeed };
+	physics->velocity = newVelocity;
+	physics->isActive = true;
+	collider->enabled = true;
+	physics->collider = collider;
 }

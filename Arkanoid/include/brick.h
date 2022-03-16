@@ -1,29 +1,20 @@
 #pragma once
 #include "entity.h"
-#include "RenderComponent.h"
-#include "CollisionComponent.h"
 #include "collision.h"
 #include "common.h"
 #include "config.h"
 #include "game_data.h"
 
+struct RenderComponent;
+struct CollisionComponent;
 
 class Brick : public Entity
 {
 public:
-	//Brick* bricks;
-	int score = 0;
-	int brickIndex = 0;
-	int maxHealth = 1, currentHealth = 1;
+	int score, brickIndex, maxHealth, currentHealth;
 	Data::BrickType type;
 	actionInt onDestroyCallback;
-	Brick()
-	{
-		type = Data::BrickType::Six;
-		//bricks = nullptr;
-		onDestroyCallback = nullptr;
-		size = { brick_width, brick_height };
-	}
+	Brick();
 	void initializeTypeData(Data::BrickType type, Color c1, Color c2, Color o, int score, int maxHealth);
 	void onCollision(CollisionParams& params) override;
 	void reduceHealth(int amount);
