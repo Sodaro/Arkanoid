@@ -1,10 +1,12 @@
 #pragma once
 #include <raylib.h>
+#include <map>
+#include <vector>
 struct Data
 {
-	enum class BrickType { None, One, Two, Three, Four, Five, Six, Count };
 	struct BrickData
 	{
+		char key = ' ';
 		int health = 0;
 		int score = 0;
 		Color color1 = WHITE;
@@ -23,7 +25,8 @@ struct Data
 		Color color2 = WHITE;
 		Color outline = WHITE;
 	};
-	BrickData brickData[(int)BrickType::Count];
+	std::map<char, BrickData> brickData;
+	std::vector<char> keys;
 	BallData ballData;
 	PlayerData playerData;
 };

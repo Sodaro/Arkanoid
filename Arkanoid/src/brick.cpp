@@ -6,14 +6,15 @@
 Brick::Brick()
 {
 	score = 0, brickIndex = 0, maxHealth = 1, currentHealth = 1;
-	type = Data::BrickType::Six;
+	//type = Data::BrickType::Six;
+	key = '1';
 	onDestroyCallback = nullptr;
 	size = { brick_width, brick_height };
 }
 
-void Brick::initializeTypeData(Data::BrickType type, Color c1, Color c2, Color o, int score, int maxHealth)
+void Brick::initializeTypeData(char key, Color c1, Color c2, Color o, int score, int maxHealth)
 {
-	this->type = type;
+	this->key = key;
 	this->score = score;
 	this->maxHealth = maxHealth;
 	color1 = c1;

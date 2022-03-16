@@ -174,21 +174,9 @@ bool Game::setup()
         brick.assignRenderer(renderer);
         brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
         int dataIndex = 0;
-        //Data::BrickData data = Data::brickData[0].color1, Data::brickData[0].color2, Data::brickData[0].score
-
-        switch (content[i])
-        {
-        case '6': dataIndex = (int)Data::BrickType::Six;   break;
-        case '5': dataIndex = (int)Data::BrickType::Five;  break;
-        case '4': dataIndex = (int)Data::BrickType::Four;  break;
-        case '3': dataIndex = (int)Data::BrickType::Three; break;
-        case '2': dataIndex = (int)Data::BrickType::Two;   break;
-        case '1': dataIndex = (int)Data::BrickType::One;   break;
-        case '0': dataIndex = (int)Data::BrickType::None;  break;
-        }
-
-        Data::BrickData brickData = data->brickData[dataIndex];
-        bricks[i].initializeTypeData((Data::BrickType)dataIndex, brickData.color1, brickData.color2, brickData.outline, brickData.score, brickData.health);
+        char key = content[i];
+        Data::BrickData brickData = data->brickData[key];
+        bricks[i].initializeTypeData(key, brickData.color1, brickData.color2, brickData.outline, brickData.score, brickData.health);
         brick.onDestroyCallback = &Game::onBrickDestroyed;
 
 
@@ -201,7 +189,7 @@ bool Game::setup()
         brick.assignCollider(collider);
         renderer->isVisible = true;
 
-        if (bricks[i].type == Data::BrickType::None)
+        if (bricks[i].maxHealth == 0)
             bricks[i].disable();
         else
             numCreatedBricks++;
@@ -270,7 +258,7 @@ void Game::reset()
         int y = i / bricksPerRow;
         Brick& brick = bricks[i];
         brick.resetHealth();
-        if (brick.type != Data::BrickType::None)
+        if (brick.maxHealth != 0)
             brick.enable();
     }
 

@@ -12,10 +12,11 @@ class Brick : public Entity
 {
 public:
 	int score, brickIndex, maxHealth, currentHealth;
-	Data::BrickType type;
+	char key;
+	//Data::BrickType type;
 	actionInt onDestroyCallback;
 	Brick();
-	void initializeTypeData(Data::BrickType type, Color c1, Color c2, Color o, int score, int maxHealth);
+	void initializeTypeData(char key, Color c1, Color c2, Color o, int score, int maxHealth);
 	void onCollision(CollisionParams& params) override;
 	void reduceHealth(int amount);
 	void resetHealth();

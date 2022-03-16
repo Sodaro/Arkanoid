@@ -4,6 +4,7 @@
 #include "level_editor.h"
 #include <fstream>
 #include <json.hpp>
+#include <string>
 #include "game_data.h"
 #include "ui_helper.h"
 
@@ -39,15 +40,22 @@ void parseJSONData()
     std::ifstream file("game_data.json");
     nlohmann::json j;
     file >> j;
-    int index = 0;
+    //int index = 0;
     for (auto& obj : j["bricks"])
     {
-        data.brickData[index].color1 = getColorFromJSON(obj["color1"]);
-        data.brickData[index].color2 = getColorFromJSON(obj["color2"]);
-        data.brickData[index].outline = getColorFromJSON(obj["outline"]);
-        data.brickData[index].score = obj["score"].get<int>();
-        data.brickData[index].health = obj["health"].get<int>();
-        index++;
+        std::string key = obj["key"].get<std::string>();
+        Data::BrickData brData;
+        //data.brickData
+        //brData.key = key;
+        brData.color1 = getColorFromJSON(obj["color1"]);
+        brData.color2 = getColorFromJSON(obj["color2"]);
+        brData.outline = getColorFromJSON(obj["outline"]);
+        brData.score = obj["score"].get<int>();
+        brData.health = obj["health"].get<int>();
+
+        data.brickData[key[0]] = brData;
+        data.keys.push_back(key[0]);
+        //index++;
     }
     data.ballData.color1 = getColorFromJSON(j["ball"]["color1"]);
     data.ballData.color2 = getColorFromJSON(j["ball"]["color2"]);

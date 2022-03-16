@@ -21,19 +21,7 @@ void LevelEditor::writeLevelToFile()
     {
         for (int i = 0; i < num_max_bricks; i++)
         {
-            //std::cout << bricks[i].pos.x << ", " << bricks[i].pos.y << std::endl;
-            switch (bricks[i].type)
-            {
-                case Data::BrickType::None:   line += '0'; break;
-                case Data::BrickType::One:  line += '1'; break;
-                case Data::BrickType::Two: line += '2'; break;
-                case Data::BrickType::Three:   line += '3'; break;
-                case Data::BrickType::Four: line += '4'; break;
-                case Data::BrickType::Five:    line += '5'; break;
-                case Data::BrickType::Six:   line += '6'; break;
-                default:
-                    break;
-            }
+            line += bricks[i].key;
             if (i % bricksPerRow == bricksPerRow-1)
             {
                 file << line << "\n";
@@ -55,15 +43,11 @@ void LevelEditor::openLevel(std::string& name)
         {
             for (int i = 0; i < line.length(); i++)
             {
-                int brickTypeIndex = line[i] - '0';
-                if (brickTypeIndex < (int)Data::BrickType::Count)
-                {
-                    Data::BrickData brData = data->brickData[brickTypeIndex];
-                    bricks[index].changeTypeAndColor((Data::BrickType)brickTypeIndex, brData.color1, brData.color2, brData.outline);
-                }
                 index++;
                 if (index > num_max_bricks)
                     break;
+                Data::BrickData brData = data->brickData[line[i]];
+                bricks[index].changeTypeAndColor(line[i], brData.color1, brData.color2, brData.outline);
             }
         }
     }
@@ -108,19 +92,19 @@ void LevelEditor::openUpdate()
     }
     int fontSize = 8;
     int offsetPerChar = 8;
-    Vector2 playBtnPos = { game_width / 2, game_height / 2 - 50 };
-    Vector2 editorBtnPos = { game_width / 2, game_height / 2 };
-    Vector2 quitBtnPos = { game_width / 2, game_height / 2 + 50 };
+    Vector2 topPos = { game_width / 2, game_height / 2 - 50 };
+    Vector2 midPos = { game_width / 2, game_height / 2 };
+    Vector2 botPos = { game_width / 2, game_height / 2 + 50 };
 
     if (prevIndex != -1)
     {
-        UI::drawCenteredTextWithBox(levels[prevIndex], fontSize, playBtnPos, GRAY, GRAY);
+        UI::drawCenteredTextWithBox(levels[prevIndex], fontSize, topPos, GRAY, GRAY);
     }
 
-    UI::drawCenteredTextWithBox(levels[openSelectedIndex], fontSize, editorBtnPos, WHITE, WHITE);
+    UI::drawCenteredTextWithBox(levels[openSelectedIndex], fontSize, midPos, WHITE, WHITE);
     if (nextIndex != -1)
     {
-        UI::drawCenteredTextWithBox(levels[nextIndex], fontSize, quitBtnPos, GRAY, GRAY);
+        UI::drawCenteredTextWithBox(levels[nextIndex], fontSize, botPos, GRAY, GRAY);
     }
     DrawText("Enter/Space: play", 0, game_height - 20, 12, WHITE);
     DrawText("UP/DOWN: navigate", 0, game_height - 40, 12, WHITE);
@@ -165,13 +149,15 @@ void LevelEditor::editUpdate()
     {
         int dir = mouseWheel > 0 ? 1 : -1;
         blockBrushIndex += dir;
+        int keyCount = (int)data->keys.size();
         if (blockBrushIndex < 0)
-            blockBrushIndex = (int)Data::BrickType::Count - 1;
-        else if (blockBrushIndex >= (int)Data::BrickType::Count)
+            blockBrushIndex = keyCount-1;
+        else if (blockBrushIndex >= keyCount)
             blockBrushIndex = 0;
 
-        brData = data->brickData[blockBrushIndex];
-        bricks[num_max_bricks].changeTypeAndColor((Data::BrickType)blockBrushIndex, brData.color1, brData.color2, brData.outline);
+        char key = data->keys[blockBrushIndex];
+        brData = data->brickData[key];
+        bricks[num_max_bricks].changeTypeAndColor(key, brData.color1, brData.color2, brData.outline);
         
     }
 
@@ -199,8 +185,9 @@ void LevelEditor::editUpdate()
             Rectangle rec = { pos.x - size.x / 2, pos.y - size.y / 2, size.x, size.y };
             if (CheckCollisionPointRec(mousePos, rec))
             {
-                brData = data->brickData[blockBrushIndex];
-                bricks[i].changeTypeAndColor((Data::BrickType)blockBrushIndex, brData.color1, brData.color2, brData.outline);
+                char key = data->keys[blockBrushIndex];
+                brData = data->brickData[key];
+                bricks[i].changeTypeAndColor(key, brData.color1, brData.color2, brData.outline);
                 break;
             }
         }
@@ -233,7 +220,7 @@ void LevelEditor::run()
         RenderComponent* renderer = &renderers[i];
         brick.renderer = renderer;
         brick.pos = Vector2{ x * brick.size.x + brickOffsetX, y * brick.size.y + brickOffsetY };
-        brick.changeTypeAndColor((Data::BrickType)1, data->brickData[1].color1, data->brickData[1].color2, data->brickData[1].outline);
+        brick.changeTypeAndColor('1', data->brickData['1'].color1, data->brickData['1'].color2, data->brickData['1'].outline);
         renderer->pos = &brick.pos;
         renderer->size = brick.size;
         renderer->color1 = &brick.color1;
@@ -246,7 +233,7 @@ void LevelEditor::run()
     RenderComponent* renderer = &renderers[num_max_bricks];
     brick.renderer = renderer;
     brick.pos = Vector2{ game_width/2 - 20, game_height-85-brick_height/2 };
-    brick.changeTypeAndColor((Data::BrickType)1, data->brickData[1].color1, data->brickData[1].color2, data->brickData[1].outline);
+    brick.changeTypeAndColor('1', data->brickData['1'].color1, data->brickData['1'].color2, data->brickData['1'].outline);
     renderer->pos = &brick.pos;
     renderer->size = brick.size;
     renderer->color1 = &brick.color1;
