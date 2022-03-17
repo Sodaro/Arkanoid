@@ -7,6 +7,7 @@
 #include <string>
 #include "game_data.h"
 #include "ui_helper.h"
+#include "common.h"
 
 Data data;
 void drawMenu(int selectedIndex)
@@ -86,6 +87,8 @@ int main()
     SetTargetFPS(60);
     HideCursor();
 
+    SetExitKey(0);
+
     RenderTexture2D target = LoadRenderTexture(game_width, game_height);
     State state = State::Menu;
 
@@ -96,7 +99,7 @@ int main()
 
     int choice = 1, selectedIndex = 0;
     bool running = true;
-
+    OP_CODE opCode;
     while (running)
     {
         
@@ -138,20 +141,38 @@ int main()
             break;
         }
         case State::InGame:
-            if (game.levelSelectUpdate() == false)
+        {
+            opCode = game.levelSelectUpdate();
+            if (opCode == OP_CODE::SUCCESS)
             {
                 if (game.state == Game::State::Gameplay)
-                    game.run();
-
+                {
+                    opCode = game.run();
+                    if (opCode == OP_CODE::APPLICATION_QUIT)
+                        running = false;
+                }
                 state = State::Menu;
             }
-            break;
+            else if (opCode == OP_CODE::APPLICATION_QUIT)
+            {
+                running = false;
+            }
+            else
+            {
+                state = State::Menu;
+            }
+        }
+        break;
         case State::Editor:
-            editor.run();
+        {
+            opCode = editor.run();
+
+            if (opCode == OP_CODE::APPLICATION_QUIT)
+                running = false;
+
             state = State::Menu;
             break;
-        default:
-            break;
+        }
         }
     }
 

@@ -1,0 +1,9 @@
+MENU:
+UP/DOWN/W/S: navigation
+SPACE/ENTER: select
+ESCAPE: go back
+
+GAME:
+LEFT/RIGHT/A/D: move paddle
+SPACE/ENTER: shoot available ball
+ESCAPE: go back to menu

@@ -142,13 +142,11 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(projectDir)raylib\projects\VS2022\build\raylib\bin\x64\Release.DLL;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="include\level_editor.cpp" />
-    <ClCompile Include="include\utilities.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="src\ball.cpp" />
     <ClCompile Include="src\brick.cpp" />
@@ -158,10 +156,12 @@
     <ClCompile Include="src\entity.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\input.cpp" />
+    <ClCompile Include="src\level_editor.cpp" />
     <ClCompile Include="src\physics_component.cpp" />
     <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\render_component.cpp" />
     <ClCompile Include="src\ui_helper.cpp" />
+    <ClCompile Include="src\utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\ball.h" />
