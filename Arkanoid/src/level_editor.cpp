@@ -27,7 +27,6 @@ void LevelEditor::writeLevelToFile()
                 file << line << "\n";
                 line = "";
             }
-
         }
     }
 }
@@ -205,7 +204,7 @@ void LevelEditor::editUpdate()
 
 }
 
-void LevelEditor::run()
+OP_CODE LevelEditor::run()
 {
     int brickOffsetX = (int)bricks[0].size.x / 2;
     int brickOffsetY = (int)bricks[0].size.y / 2;
@@ -242,8 +241,10 @@ void LevelEditor::run()
     renderer->isVisible = true;
 
     state = State::Edit;
+    bool isRunning = true;
+    OP_CODE returnCode = OP_CODE::SUCCESS;
 
-    while (!WindowShouldClose())
+    while (isRunning)
     {
         BeginTextureMode(targetTexture);
 
@@ -272,5 +273,16 @@ void LevelEditor::run()
         DrawTexturePro(targetTexture.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
 
         EndDrawing();
+        if (IsKeyPressed(KEY_ESCAPE))
+        {
+            isRunning = false;
+            returnCode = OP_CODE::EXIT;
+        }
+        else if (WindowShouldClose())
+        {
+            isRunning = false;
+            returnCode = OP_CODE::APPLICATION_QUIT;
+        }
     }
+    return returnCode;
 }

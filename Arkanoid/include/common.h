@@ -20,3 +20,6 @@ struct CollisionParams
 
 constexpr Color bg_one = { 213,86,1,255 };
 constexpr Color bg_two = { 25,5,7,255 };
+
+
+enum class OP_CODE{SUCCESS, EXIT, APPLICATION_QUIT};

@@ -5,11 +5,9 @@
 #include "player.h"
 #include "brick.h"
 #include "ball.h"
-#include "collision.h"
-#include "input.h"
 #include "raymath.h"
-#include "config.h"
 #include "game_data.h"
+#include "common.h"
 #include "render_component.h"
 #include "physics_component.h"
 #include "collision_component.h"
@@ -66,6 +64,6 @@ class Game
         enum class State { LevelSelect, Gameplay };
         State state;
         Game(RenderTexture2D& target, Data& data);
-        bool levelSelectUpdate();
-        void run();
+        OP_CODE levelSelectUpdate();
+        OP_CODE run();
 };

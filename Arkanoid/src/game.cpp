@@ -51,8 +51,9 @@ void Game::onBallShot()
     numActiveBalls++;
 }
 
-bool Game::levelSelectUpdate()
+OP_CODE Game::levelSelectUpdate()
 {
+
     if (levelsFetched == false)
     {
         levels = Utilities::fetchLevels();
@@ -62,69 +63,87 @@ bool Game::levelSelectUpdate()
     int prevIndex = -1, nextIndex = -1;
 
     int levelCount = (int)levels.size();
-    if (levelCount == 0 || WindowShouldClose())
+
+    if (levelCount == 0)
     {
         levelsFetched = false;
-        return false;
+        return OP_CODE::EXIT;
     }
 
-    int verticalInput = Input::getVerticalInput();
-    if (verticalInput != 0)
-    {
-        openSelectedIndex += verticalInput;
-        if (openSelectedIndex >= levelCount)
-            openSelectedIndex = 0;
-        else if (openSelectedIndex < 0)
-            openSelectedIndex = levelCount - 1;
-    }
-
-    if (levelCount >= 2)
-    {
-        nextIndex = (openSelectedIndex + 1) % levelCount;
-    }
-    if (levelCount >= 3)
-    {
-        prevIndex = openSelectedIndex - 1;
-        if (prevIndex < 0)
-            prevIndex = levelCount - 1;
-    }
     int fontSize = 8;
     int offsetPerChar = 8;
     Vector2 playBtnPos = { game_width / 2, game_height / 2 - 50 };
     Vector2 editorBtnPos = { game_width / 2, game_height / 2 };
     Vector2 quitBtnPos = { game_width / 2, game_height / 2 + 50 };
 
-
-    BeginTextureMode(targetTexture);
-
-    ClearBackground(BLACK);
-    if (prevIndex != -1)
+    OP_CODE returnCode = OP_CODE::SUCCESS;
+    bool isRunning = true;
+    while (isRunning)
     {
-        UI::drawCenteredTextWithBox(levels[prevIndex], fontSize, playBtnPos, GRAY, GRAY);
+        if (WindowShouldClose())
+        {
+            isRunning = false;
+            returnCode = OP_CODE::APPLICATION_QUIT;
+        }
+        else if (IsKeyPressed(KEY_ESCAPE))
+        {
+            isRunning = false;
+            returnCode = OP_CODE::EXIT;
+        }
+
+        int verticalInput = Input::getVerticalInput();
+        if (verticalInput != 0)
+        {
+            openSelectedIndex += verticalInput;
+            if (openSelectedIndex >= levelCount)
+                openSelectedIndex = 0;
+            else if (openSelectedIndex < 0)
+                openSelectedIndex = levelCount - 1;
+        }
+
+        if (levelCount >= 2)
+        {
+            nextIndex = (openSelectedIndex + 1) % levelCount;
+        }
+        if (levelCount >= 3)
+        {
+            prevIndex = openSelectedIndex - 1;
+            if (prevIndex < 0)
+                prevIndex = levelCount - 1;
+        }
+
+        BeginTextureMode(targetTexture);
+
+        ClearBackground(BLACK);
+        if (prevIndex != -1)
+        {
+            UI::drawCenteredTextWithBox(levels[prevIndex], fontSize, playBtnPos, GRAY, GRAY);
+        }
+
+        UI::drawCenteredTextWithBox(levels[openSelectedIndex], fontSize, editorBtnPos, WHITE, WHITE);
+        if (nextIndex != -1)
+        {
+            UI::drawCenteredTextWithBox(levels[nextIndex], fontSize, quitBtnPos, GRAY, GRAY);
+        }
+
+        DrawText("Enter/Space: play", 0, game_height - 20, 12, WHITE);
+        DrawText("UP/DOWN: navigate", 0, game_height - 40, 12, WHITE);
+        EndTextureMode();
+
+        BeginDrawing();
+        DrawTexturePro(targetTexture.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
+        EndDrawing();
+
+        if (Input::actionPressed())
+        {
+            fileName = levels[openSelectedIndex];
+            state = State::Gameplay;
+            levelsFetched = false;
+            isRunning = false;
+            returnCode = OP_CODE::SUCCESS;
+        }
     }
-
-    UI::drawCenteredTextWithBox(levels[openSelectedIndex], fontSize, editorBtnPos, WHITE, WHITE);
-    if (nextIndex != -1)
-    {
-        UI::drawCenteredTextWithBox(levels[nextIndex], fontSize, quitBtnPos, GRAY, GRAY);
-    }
-
-    DrawText("Enter/Space: play", 0, game_height - 20, 12, WHITE);
-    DrawText("UP/DOWN: navigate", 0, game_height - 40, 12, WHITE);
-    EndTextureMode();
-
-    BeginDrawing();
-    DrawTexturePro(targetTexture.texture, Rectangle{ 0,0,game_width, -game_height }, Rectangle{ 0,0, screen_width, screen_height }, Vector2{ 0,0 }, 0, WHITE);
-    EndDrawing();
-
-    if (Input::actionPressed())
-    {
-        fileName = levels[openSelectedIndex];
-        state = State::Gameplay;
-        levelsFetched = false;
-        return false;
-    }
-    return true;
+    return returnCode;
 }
 
 bool Game::setup()
@@ -302,7 +321,7 @@ Game::Game(RenderTexture2D& target, Data& data)
     destroyWav = LoadSound("resources/brick_destroy.wav");
 }
 
-void Game::run()
+OP_CODE Game::run()
 {
     int renderMode = (int)RenderComponent::Mode::FILL_LINES;
     int nrOfPhysicsObjects = sizeof(physicsComponents) / sizeof(PhysicsComponent);
@@ -310,9 +329,10 @@ void Game::run()
     Rectangle gradientRect = { 0,0,game_width, game_height };
 
     if (!setup())
-        return;
+        return OP_CODE::EXIT;
     reset();
 
+    OP_CODE returnCode = OP_CODE::SUCCESS;
     double time = GetTime();
     double prev_time = time;
     double delta_time;
@@ -374,8 +394,20 @@ void Game::run()
 
             prev_time = time;
 
-            isRunning = !WindowShouldClose();
+            //isRunning = !WindowShouldClose();
             gameOver = lives <= 0;
+
+            if (IsKeyPressed(KEY_ESCAPE))
+            {
+                isRunning = false;
+                returnCode = OP_CODE::EXIT;
+            }
+            else if (WindowShouldClose())
+            {
+                isRunning = false;
+                returnCode = OP_CODE::APPLICATION_QUIT;
+            }
         }
     }
+    return returnCode;
 }

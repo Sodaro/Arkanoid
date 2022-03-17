@@ -26,5 +26,5 @@ class LevelEditor
     void writeUpdate();
 public:
     LevelEditor(RenderTexture2D& targetTexture, Data& data);
-    void run();
+    OP_CODE run();
 };
